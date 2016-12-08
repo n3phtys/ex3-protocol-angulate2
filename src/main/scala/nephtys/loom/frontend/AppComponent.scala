@@ -10,7 +10,13 @@ import angulate2.std.Component
   template =
     """<h1>I am Loom's AppComponent</h1>
       <login-area></login-area>
+      <nav>
+          <a routerLink="/dashboard/vanilla" routerLinkActive="active">Dashboard</a>
+          <a routerLink="/new/vanilla" routerLinkActive="active">Create New Solar</a>
+      </nav>
+      <router-outlet></router-outlet>
     """
+
 )
 class AppComponent {
 
