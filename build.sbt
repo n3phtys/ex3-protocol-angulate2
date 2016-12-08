@@ -12,7 +12,8 @@ scalaVersion := "2.11.8"
 val actualProtocolurl =  "https://github.com/n3phtys/protocol-vanilla-solar.git"
 val genericFrontendUrl = "https://github.com/n3phtys/cqrs-client-frame.git"
 
-lazy val actualProtocolProject = RootProject(uri(actualProtocolurl))
+lazy val actualProtocolProject = ProjectRef(uri(actualProtocolurl), "solarprotocolJS")
+
 lazy val genericFrontendProject = RootProject(uri(genericFrontendUrl))
 
 
