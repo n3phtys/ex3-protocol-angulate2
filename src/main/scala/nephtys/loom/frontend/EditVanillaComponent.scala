@@ -16,8 +16,8 @@ import scala.util.Try
   selector = "detail-edit-vanilla",
   template =
     """<h2>Here you can edit a vanilla aggregate</h2>
+      |<string-pair-list title="Specialties/Intimacies"></string-pair-list>
       |<solar-attributes></solar-attributes>
-      |<solar-specialties></solar-specialties>
       |<div >Currently loaded: {{character?.id}}</div>
       |<div> full: {{character}} </div>
     """.stripMargin
