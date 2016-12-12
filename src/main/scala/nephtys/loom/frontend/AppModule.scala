@@ -18,7 +18,7 @@ import scala.scalajs.js.Object
   imports = @@[ClientFrameModule, BrowserModule, FormsModule] :+
     RouterModule.forRoot(Routes.routes, js.Dynamic.literal(useHash = true)),
   providers = @@[VanillaAggregateService],
-  declarations = @@[AppComponent, AttributeComponent, StringPairComponent, NewVanillaComponent,DashboardVanillaComponent, MainTableVanillaComponent, EditVanillaComponent],
+  declarations = @@[AppComponent, AbilityComponent, PointsLeftComponent, AttributeComponent, VanillaExperienceComponent, StringPairComponent, NewVanillaComponent,DashboardVanillaComponent, MainTableVanillaComponent, EditVanillaComponent],
   bootstrap = @@[AppComponent]
 )
 class AppModule {
