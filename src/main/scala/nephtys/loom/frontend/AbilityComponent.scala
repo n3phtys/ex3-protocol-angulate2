@@ -116,7 +116,7 @@ class AbilityComponent {
   def typeChanged(indexOfTypeable : Int, newValue : Event) : Unit = {
     val typ : Type = Abilities.strToTypes.getOrElse(newValue.toString, Normal)
     println(s"Changing type of $indexOfTypeable to $typ")
-    typeableHierarchy(indexOfTypeable).title = typ.toString
+    typeableHierarchy(indexOfTypeable).typ = typ.toString
     recalcFullTypes()
   }
 
