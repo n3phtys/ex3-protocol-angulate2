@@ -48,7 +48,7 @@ import scala.scalajs.js.Array
       |</dot-control>
       |</div></li>
       |</ol>
-      |<button *ngIf="pack.addable">Add new member Ability to {{pack.title}}</button>
+      |<button *ngIf="pack.addable" (click)="addNewMemberPressed(i)">Add new member Ability to {{pack.title}}</button>
       |</div>
       |</li>
       |</ul>
@@ -126,7 +126,15 @@ class AbilityComponent {
   }
 
   def addNewMemberPressed(indexOfFamily : Int) : Unit = {
-    ??? //todo: open text dialog to input name of new Ability, afterwards confirm
+    //open text dialog to input name of new Ability, afterwards confirm
+
+    val str : String = org.scalajs.dom.window.prompt(s"Enter the new of the new subcategory for ${typeableHierarchy(indexOfFamily).title}", "Fire")
+    val ok : Boolean = org.scalajs.dom.window.confirm(s"Do you really want to create a new sub-ability with the name $str? Last chance!")
+    if (ok) {
+      val r1 = typeableHierarchy(indexOfFamily).abilities.push(str)
+      val r2 = typeableHierarchy(indexOfFamily).ratings.push(0)
+    }
+
   }
 
   def inputChanged() : Unit = {
