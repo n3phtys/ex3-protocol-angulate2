@@ -1,6 +1,15 @@
 package nephtys.loom.frontend
 
-import angulate2.std.{@@@, Component}
+import angulate2.std._
+
+import scala.scalajs.js
+import scala.scalajs.js.JSConverters._
+import nephtys.loom.protocol.vanilla.solar.{Abilities, Misc}
+import nephtys.loom.protocol.vanilla.solar.Abilities._
+import nephtys.loom.protocol.vanilla.solar.Misc.Caste
+import org.scalajs.dom.raw.Event
+
+import scala.scalajs.js.Array
 
 /**
   * Created by nephtys on 12/12/16.
@@ -9,19 +18,160 @@ import angulate2.std.{@@@, Component}
   selector = "abilities-caste-vanilla",
   template =
     """ <div>
+      |<h3>Caste</h3>
+      |<div class="form-group">
+      | <label for="sel1">Select Solar Caste</label>
+      |    <select class="form-control"  id="sel1" name="caste" [ngModel]="selectedCasteStr" (ngModelChange)="casteChanged($event)">
+      |        <option *ngFor="let c of possibleCastes" [value]="c">
+      |        {{c}}
+      |        </option>
+      |    </select>
+      |    </div>
+      |<h3>Abilities</h3>
+      |caste abilities: <label *ngFor="let s of casteAbilities" > - {{s}} - </label>
+      |<ul>
+      |<li *ngFor="let pack of typeableHierarchy; let i = index" >
+      |<div>
+      |<select [name]="pack.title" [ngModel]="pack.typ" (ngModelChange)="typeChanged(i, $event)">
+      |        <option *ngFor="let t of possibleTypeStates; let j = index" [value]="t" [disabled]="! typeAble[i][j]">
+      |        {{t}}
+      |        </option>
+      |    </select>
+      |{{pack.title}}:
+      |<dot-control *ngIf="pack.unique" color="purple" [value]="pack.ratings[0]"></dot-control>
+      |<ol *ngIf="! pack.unique">
+      |<li *ngFor="let ability of pack.abilities; let k = index" > <div>{{ability}} : {{pack.ratings[k]}} <dot-control *ngIf="pack.unique" color="purple" [value]="pack.ratings[k]"></dot-control> </div></li>
+      |</ol>
+      |<button *ngIf="pack.addable">Add new member Ability to {{pack.title}}</button>
+      |</div>
+      |</li>
+      |</ul>
+      |
       |this is the abilities-caste-vanilla component
+      |for {{typeableHierarchy}}
       |</div>
     """.stripMargin,
   styles = @@@(
     """
-      |.form-inline > * {
-      |   margin:15px 15px;
-      |}
+      |
     """.stripMargin)
 
 )
 class AbilityComponent {
 
+  @Input
+  var input: AbilityMatrix = Abilities.emptyMatrix
+
+  @Input
+  var caste : Option[Caste] = None
+
+
+  var typeAble : Array[Array[Boolean]] = Array() // calculate for every typeGroup the 4 possible legal options
+
+  val possibleTypeStates: Array[String] = Abilities.types.map(_.toString).toJSArray
+  val possibleCastes: Array[String] = Misc.Castes.map(_.toString).toJSArray
+
+  var selectedCasteStr : String = _
+  var selectedCaste : Option[Caste] = None
+
+  var typeableHierarchy : Array[AbilityPack] = js.Array()
+
+  var numberOfSupernalAbilitiesSet : Int = 0
+  var numberOfCasteAbilitiesSet : Int = 0
+  var numberOfFavoredAbilitiesSet : Int = 0
+
+
+  var casteAbilities : Array[String] = Array()
+
+
+  def setTypeableHierarchy(v :  Map[String, (Map[String, Int], Boolean, Abilities.Type)]) : Unit = {
+      val ra : Seq[(String, (Seq[String], Seq[Int], Boolean, Abilities.Type))] = v.toSeq.map(e => {
+        val keys : Seq[String] = e._2._1.keys.toSeq
+        val values : Seq[Int] = keys.map(k => e._2._1(k))
+        (e._1, (keys, values, e._2._2, e._2._3))
+      })
+    typeableHierarchy = ra.map(k => new AbilityPack(k._1 ,k._2._4.toString, k._2._1.toJSArray, k._2._2.toJSArray, k._2._3)).sortBy(_.title).toJSArray
+
+    typeAble = (1 to typeableHierarchy.length).map(i => Array(false, false, false, false)).toJSArray
+  }
+
+
+  def casteChanged(obj : Event) : Unit = {
+    println("received obj")
+    val str = obj.toString
+    println(s"casteChanged($str) called")
+    selectedCasteStr = str
+    Misc.StrToCaste.get(str).foreach(c => triggerCasteChange(c))
+  }
+
+  def typeChanged(indexOfTypeable : Int, newValue : Event) : Unit = {
+    val typ : Type = Abilities.strToTypes.getOrElse(newValue.toString, Normal)
+    println(s"Changing type of $indexOfTypeable to $typ")
+    typeableHierarchy(indexOfTypeable).title = typ.toString
+    recalcFullTypes()
+  }
+
+  def typeChangedRelative(indexOfTypeable : Int, newValue : Type, oldValue : Type) : Unit = {
+
+  }
+
+  def ratingChanged(indexOfTypeable : Int, indexOfSubability : Int, newValue : Int) : Unit = {
+    ???
+  }
+
+  def inputChanged() : Unit = {
+
+    setTypeableHierarchy(input.buildTypeableTree)
+
+    recalcFullTypes()
+
+    selectedCaste = caste
+
+  }
+
+  inputChanged()
+
+  def saveBtnPressed() : Unit = {
+    ???
+  }
+
+  def revertBtnPressed() : Unit = {
+    ???
+  }
+
+  def recalcFullTypes() : Unit = {
+    numberOfCasteAbilitiesSet = 0
+    numberOfFavoredAbilitiesSet = 0
+    numberOfSupernalAbilitiesSet = 0
+    typeableHierarchy.foreach(pack => Abilities.strToTypes(pack.typ) match {
+      case Normal =>
+      case Favored => numberOfFavoredAbilitiesSet += 1
+      case Caste => numberOfCasteAbilitiesSet += 1
+      case Supernal => numberOfSupernalAbilitiesSet += 1
+    }
+
+    )
+    println(s"recalculating typeAble for caste $selectedCaste")
+    typeAble = typeableHierarchy.map(pack => Array(
+      true,
+      Abilities.strToTypes(pack.typ) == Caste || (numberOfCasteAbilitiesSet < 4 && Abilities.preprogrammed.isCasteAbility(selectedCaste, pack.title)),
+      Abilities.strToTypes(pack.typ) == Favored || numberOfFavoredAbilitiesSet < 5,
+      Abilities.strToTypes(pack.typ) == Supernal || (numberOfSupernalAbilitiesSet < 1 && Abilities.preprogrammed.isCasteAbility(selectedCaste, pack.title))
+    ) )
+  }
+
+  def triggerCasteChange(caste : Caste) : Unit = {
+    casteAbilities = Abilities.preprogrammed.casteAbility(caste).map(_.name).toSeq.sorted.toJSArray
+    selectedCaste = Some(caste)
+    println(s"Caste changed to $caste")
+    recalcFullTypes()
+    //TODO: trigger eventemitter
+  }
+
+  def triggerAbilityMatrixChange(changedMatrix : AbilityMatrix) : Unit = {
+    println(s"Abilitymatrix changed to $changedMatrix")
+    //TODO: trigger eventemitter
+  }
 
   /*
   can add a new ability to a given list
