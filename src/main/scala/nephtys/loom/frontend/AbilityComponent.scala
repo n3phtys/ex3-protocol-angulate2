@@ -9,6 +9,7 @@ import nephtys.loom.protocol.vanilla.solar.Abilities._
 import nephtys.loom.protocol.vanilla.solar.Misc.Caste
 import org.scalajs.dom.raw.Event
 
+import scala.concurrent.Future
 import scala.scalajs.js.Array
 
 /**
@@ -27,8 +28,9 @@ import scala.scalajs.js.Array
       |        </option>
       |    </select>
       |    </div>
+      |<div *ngIf="selectedCasteStr" >caste abilities for {{selectedCasteStr}}: <label *ngFor="let s of casteAbilities" > - {{s}} - </label>
+      |</div>
       |<h3>Abilities</h3>
-      |caste abilities: <label *ngFor="let s of casteAbilities" > - {{s}} - </label>
       |<ul>
       |<li *ngFor="let pack of typeableHierarchy; let i = index" >
       |<div>
@@ -37,18 +39,25 @@ import scala.scalajs.js.Array
       |        {{t}}
       |        </option>
       |    </select>
-      |{{pack.title}}:
-      |<dot-control *ngIf="pack.unique" color="purple" [value]="pack.ratings[0]"></dot-control>
+      |    <label *ngIf="! pack.unique">{{pack.title}}</label>
+      |<dot-control *ngIf="pack.unique" color="purple" [name]="pack.title" [value]="pack.ratings[0]"></dot-control>
       |<ol *ngIf="! pack.unique">
-      |<li *ngFor="let ability of pack.abilities; let k = index" > <div>{{ability}} : {{pack.ratings[k]}} <dot-control *ngIf="pack.unique" color="purple" [value]="pack.ratings[k]"></dot-control> </div></li>
+      |<li *ngFor="let ability of pack.abilities; let k = index" >
+      |<div>
+      |<dot-control [name]="ability" color="purple" [value]="pack.ratings[k]">
+      |</dot-control>
+      |</div></li>
       |</ol>
       |<button *ngIf="pack.addable">Add new member Ability to {{pack.title}}</button>
       |</div>
       |</li>
       |</ul>
       |
-      |this is the abilities-caste-vanilla component
-      |for {{typeableHierarchy}}
+      |<button type="button" (click)="saveBtnPressed()" class="btn btn-success"
+      |      >Save changes</button>
+      |
+      |<button type="button" (click)="revertBtnPressed()" class="btn btn-info"
+      |      >Revert changes</button>
       |</div>
     """.stripMargin,
   styles = @@@(
@@ -111,32 +120,35 @@ class AbilityComponent {
     recalcFullTypes()
   }
 
-  def typeChangedRelative(indexOfTypeable : Int, newValue : Type, oldValue : Type) : Unit = {
-
-  }
 
   def ratingChanged(indexOfTypeable : Int, indexOfSubability : Int, newValue : Int) : Unit = {
-    ???
+    ??? //todo: implement via events from dots control and write to temp object
+  }
+
+  def addNewMemberPressed(indexOfFamily : Int) : Unit = {
+    ??? //todo: open text dialog to input name of new Ability, afterwards confirm
   }
 
   def inputChanged() : Unit = {
+    selectedCaste = caste
+    selectedCasteStr = caste.map(_.toString).getOrElse("")
+    caste.foreach(caste => casteAbilities = Abilities.preprogrammed.casteAbility(caste).map(_.name).toSeq.sorted.toJSArray)
 
     setTypeableHierarchy(input.buildTypeableTree)
 
     recalcFullTypes()
 
-    selectedCaste = caste
 
   }
 
-  inputChanged()
+
 
   def saveBtnPressed() : Unit = {
-    ???
+    ??? //TODO: output changes to the world
   }
 
   def revertBtnPressed() : Unit = {
-    ???
+    inputChanged()
   }
 
   def recalcFullTypes() : Unit = {
@@ -199,4 +211,9 @@ class AbilityComponent {
 
 
    */
+
+  import scala.concurrent.ExecutionContext.Implicits.global
+  val f = Future {
+    inputChanged() //todo: call during OnChanges (once that is possible)
+  }
 }

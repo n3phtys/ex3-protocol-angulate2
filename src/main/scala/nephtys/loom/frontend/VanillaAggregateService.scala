@@ -3,7 +3,7 @@ package nephtys.loom.frontend
 import java.util.UUID
 
 import angulate2.std.Injectable
-import nephtys.loom.protocol.vanilla.solar.Misc.Name
+import nephtys.loom.protocol.vanilla.solar.Misc.{Name, Twilight, Zenith}
 import nephtys.loom.protocol.vanilla.solar.{Characters, Solar}
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 import rxscalajs.Observable
@@ -17,8 +17,8 @@ class VanillaAggregateService {
 
   private def ownermock = Email("christopher.kaag@gmail.com")
   private def mocks = Seq(
-    Characters.emptySolar(ID[Solar](UUID.fromString("2d246cc1-77ac-406a-ae7c-f84d9cee16c8")), ownermock),
-    Characters.emptySolar(ID[Solar](UUID.fromString("1d216cc1-76ac-406a-ae7c-f84d9cee16c8")), ownermock),
+    Characters.emptySolar(ID[Solar](UUID.fromString("2d246cc1-77ac-406a-ae7c-f84d9cee16c8")), ownermock).copy(caste = Some(Zenith)),
+    Characters.emptySolar(ID[Solar](UUID.fromString("1d216cc1-76ac-406a-ae7c-f84d9cee16c8")), ownermock).copy(caste = Some(Twilight)),
     Characters.emptySolar(ID[Solar](UUID.fromString("4d246bd3-77ac-406a-ae7c-f84d9cee16c8")), ownermock)
   ).map(a => (a.id, a)).toMap
 
