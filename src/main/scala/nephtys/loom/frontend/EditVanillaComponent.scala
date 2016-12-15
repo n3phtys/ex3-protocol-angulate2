@@ -16,6 +16,7 @@ import scala.util.Try
   selector = "detail-edit-vanilla",
   template =
     """<h2>Here you can edit a vanilla aggregate</h2>
+      |<experience-component></experience-component>
       |<abilities-caste-vanilla *ngIf="character" [input]="character.abilities" [caste]="character.caste" ></abilities-caste-vanilla>
       |<string-pair-list title="Specialties/Intimacies"></string-pair-list>
       |<solar-attributes></solar-attributes>
