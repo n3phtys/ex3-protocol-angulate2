@@ -27,13 +27,17 @@ import scala.util.Try
       |
       |</li>
       |</ul>
+      |<p>
       |You are therefore <label>Essence {{essence}}</label>
-      |
+      |</p>
+      |<p>
+      | <button (click)="endCGclicked()"  class="btn btn-success" *ngIf="! charGenFinished">Press this Button to permanently leave Character Generation. You cannot undo this step!</button>
+      |</p>
       |</div>
       |</div>
       |
       |
-      |<div class="panel panel-primary">
+      |<div class="panel panel-primary" *ngIf="charGenFinished">
       |<div class="panel-heading">Manual changes to experience</div>
       |<div class="panel-body">
       |<div>
@@ -102,6 +106,9 @@ class VanillaExperienceComponent {
   @Input
   var experience : ExperienceBox = Experiences.mockBox
 
+  @Input
+  var charGenFinished : Boolean = false
+
   var types : js.Array[ExperienceType] = js.Array()
   var possibleTypes : js.Array[ExperienceType] = Experiences.types.toJSArray
   var selectedType : ExperienceType = GeneralXP
@@ -125,6 +132,13 @@ class VanillaExperienceComponent {
 
 
     println("Add Button pressed with values")
+  }
+
+  def endCGclicked() : Unit = {
+    if (org.scalajs.dom.window.confirm("Do you really want to permanently leave Character Generation? You cannot return to it.")) {
+      charGenFinished = true
+      charGenFinishEvent(charGenFinished)
+    }
   }
 
   def inputChanged() : Unit = {
@@ -151,6 +165,10 @@ class VanillaExperienceComponent {
 
 
   def manualChangeEvent(eb : ExperienceBox) : Unit = {
+    //TODO: trigger eventemitter
+  }
+
+  def charGenFinishEvent(finished : Boolean) : Unit = {
     //TODO: trigger eventemitter
   }
 }
