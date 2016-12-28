@@ -2,6 +2,7 @@ package nephtys.loom.frontend
 
 import java.util.UUID
 
+import angulate2.core.OnInitJS
 import angulate2.router.ActivatedRoute
 import angulate2.std.{Component, OnInit}
 import nephtys.loom.protocol.vanilla.solar.Solar
@@ -24,7 +25,7 @@ import scala.util.Try
       |<div> full: {{character}} </div>
     """.stripMargin
 )
-class EditVanillaComponent(  route: ActivatedRoute, vanillaAggregateService: VanillaAggregateService) extends OnInit{
+class EditVanillaComponent(  route: ActivatedRoute, vanillaAggregateService: VanillaAggregateService) extends OnInitJS{
 
   var character : Solar = _
 
