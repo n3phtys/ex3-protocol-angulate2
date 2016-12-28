@@ -1,9 +1,14 @@
 package nephtys.loom.frontend
 
 
+import angulate2.core.OnChanges.SimpleChanges
+import angulate2.core.{EventEmitter, OnChangesJS}
 import angulate2.std._
-import nephtys.loom.protocol.vanilla.solar.Attributes.AttributeRating
+import nephtys.loom.protocol.vanilla.solar.Attributes
+import nephtys.loom.protocol.vanilla.solar.Attributes.{AttributeBlock, AttributeRating}
+import nephtys.loom.protocol.vanilla.solar.Misc.Dots
 
+import scala.collection.mutable
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters._
 import scala.scalajs.js
@@ -18,24 +23,24 @@ import scala.scalajs.js
                | <div class="container">
                | <div class="container-column">
                | <div class="column-header">Physical</div>
-               |<dot-control color="red" [value]="str" [min]="minvalue" name="Strength" class="container-cell"></dot-control>
-               | <dot-control color="red" [value]="dex" [min]="minvalue" name="Dexterity" class="container-cell"></dot-control>
-               | <dot-control color="red" [value]="sta" [min]="minvalue" name="Stamina" class="container-cell"></dot-control>
+               |<dot-control color="red" [value]="attributeMap[str]" [min]="minvalue" (valueSelected)="scoreChange(str, $event)" name="Strength" class="container-cell"></dot-control>
+               | <dot-control color="red" [value]="attributeMap[dex]" (valueSelected)="scoreChange(dex, $event)" [min]="minvalue" name="Dexterity" class="container-cell"></dot-control>
+               | <dot-control color="red" [value]="attributeMap[sta]" (valueSelected)="scoreChange(sta, $event)" [min]="minvalue" name="Stamina" class="container-cell"></dot-control>
                |
                |
                | </div>
                | <div class="container-column">
                | <div class="column-header">Social</div>
                |
-               | <dot-control color="orange" [value]="cha" [min]="minvalue" name="Charisma" class="container-cell"></dot-control>
-               | <dot-control color="orange" [value]="man" [min]="minvalue" name="Manipulation" class="container-cell"></dot-control>
-               | <dot-control color="orange" [value]="app" [min]="minvalue" name="Appearance" class="container-cell"></dot-control>
+               | <dot-control color="orange" [value]="attributeMap[cha]" (valueSelected)="scoreChange(cha, $event)" [min]="minvalue" name="Charisma" class="container-cell"></dot-control>
+               | <dot-control color="orange" [value]="attributeMap[man]" (valueSelected)="scoreChange(man, $event)" [min]="minvalue" name="Manipulation" class="container-cell"></dot-control>
+               | <dot-control color="orange" [value]="attributeMap[app]" (valueSelected)="scoreChange(app, $event)" [min]="minvalue" name="Appearance" class="container-cell"></dot-control>
                | </div>
                | <div class="container-column">
                | <div class="column-header">Mental</div>
-               | <dot-control color="cyan" [value]="per" [min]="minvalue" name="Perception" class="container-cell"></dot-control>
-               | <dot-control color="cyan" [value]="int" [min]="minvalue" name="Intelligence" class="container-cell"></dot-control>
-               | <dot-control color="cyan" [value]="wit" [min]="minvalue" name="Wits" class="container-cell"></dot-control>
+               | <dot-control color="cyan" [value]="attributeMap[per]" (valueSelected)="scoreChange(per, $event)" [min]="minvalue" name="Perception" class="container-cell"></dot-control>
+               | <dot-control color="cyan" [value]="attributeMap[int]" (valueSelected)="scoreChange(int, $event)" [min]="minvalue" name="Intelligence" class="container-cell"></dot-control>
+               | <dot-control color="cyan" [value]="attributeMap[wit]" (valueSelected)="scoreChange(wit, $event)" [min]="minvalue" name="Wits" class="container-cell"></dot-control>
                |
                |
                | </div>
@@ -73,19 +78,42 @@ import scala.scalajs.js
                    """.stripMargin)
 
 )
-class AttributeComponent {
+class AttributeComponent extends OnChangesJS {
 
-  val minvalue = 0
+  @Input
+  var attributes : AttributeBlock = Attributes.emptyAttributeBlock
 
-  var str = 2
-  var dex = 3
-  var sta = 2
-  var cha = 5
-  var man = 1
-  var app = 3
-  var per = 3
-  var wit = 2
-  var int = 4
+  var attributeMap : js.Array[Int] = js.Array()
 
-  def triggerChanged(newRatings : IndexedSeq[AttributeRating]) : Unit = ???
+  @Output
+  val change = new EventEmitter[AttributeBlock]()
+
+  @Input
+  var minvalue = 1
+
+  def scoreChange(attribute : Int, newValue : Int) : Unit = {
+    println(s"Changing in Attribute index $attribute to value $newValue")
+    attributeMap(attribute) = newValue
+    val t = attributes.block.zipWithIndex.map(a => AttributeRating(a._1.attribute, Dots(newValue.toByte)))
+    change.emit(AttributeBlock(t))
+  }
+
+  val str = 0
+  val dex = 1
+  val sta = 2
+  val cha = 3
+  val man = 4
+  val app = 5
+  val per = 6
+  val wit = 7
+  val int = 8
+
+  def inputChanged() : Unit = {
+    attributeMap.clear()
+    attributes.block.foreach(c => attributeMap.push(c.dots.number.toInt))
+  }
+
+  inputChanged()
+
+  override def ngOnChanges(changes: SimpleChanges): Unit = inputChanged()
 }
