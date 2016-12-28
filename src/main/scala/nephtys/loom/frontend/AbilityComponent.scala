@@ -1,12 +1,14 @@
 package nephtys.loom.frontend
 
+import angulate2.core.OnChanges.SimpleChanges
+import angulate2.core.{EventEmitter, OnChangesJS}
 import angulate2.std._
 
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters._
 import nephtys.loom.protocol.vanilla.solar.{Abilities, Misc}
 import nephtys.loom.protocol.vanilla.solar.Abilities._
-import nephtys.loom.protocol.vanilla.solar.Misc.Caste
+import nephtys.loom.protocol.vanilla.solar.Misc.{Caste, Dots}
 import org.scalajs.dom.raw.Event
 
 import scala.concurrent.Future
@@ -40,11 +42,11 @@ import scala.scalajs.js.Array
       |        </option>
       |    </select>
       |    <label *ngIf="! pack.unique">{{pack.title}}</label>
-      |<dot-control *ngIf="pack.unique" color="purple" [name]="pack.title" [value]="pack.ratings[0]"></dot-control>
+      |<dot-control *ngIf="pack.unique" (selectedValue)="ratingChanged(i,0,$event)" color="purple" [name]="pack.title" [value]="pack.ratings[0]"></dot-control>
       |<ol *ngIf="! pack.unique">
       |<li *ngFor="let ability of pack.abilities; let k = index" >
       |<div>
-      |<dot-control [name]="ability" color="purple" [value]="pack.ratings[k]">
+      |<dot-control [name]="ability" (selectedValue)="ratingChanged(i,k,$event)"  color="purple" [value]="pack.ratings[k]">
       |</dot-control>
       |</div></li>
       |</ol>
@@ -66,7 +68,15 @@ import scala.scalajs.js.Array
     """.stripMargin)
 
 )
-class AbilityComponent {
+class AbilityComponent extends OnChangesJS{
+  //changes to the outside: changes to abilities and changes to case
+
+  @Output
+  val casteChange = new EventEmitter[Caste]()
+
+  @Output
+  val abilitiesChange = new EventEmitter[AbilityMatrix]()
+
 
   @Input
   var input: AbilityMatrix = Abilities.emptyMatrix
@@ -122,7 +132,7 @@ class AbilityComponent {
 
 
   def ratingChanged(indexOfTypeable : Int, indexOfSubability : Int, newValue : Int) : Unit = {
-    ??? //todo: implement via events from dots control and write to temp object
+    typeableHierarchy(indexOfTypeable).ratings(indexOfSubability) = newValue
   }
 
   def addNewMemberPressed(indexOfFamily : Int) : Unit = {
@@ -152,7 +162,21 @@ class AbilityComponent {
 
 
   def saveBtnPressed() : Unit = {
-    ??? //TODO: output changes to the world
+    //output ability changes to the world, possible such changes:
+    //rating change
+    //type change
+    //subability change
+
+    val abilityLikes : Set[AbilityLike] = typeableHierarchy.toSeq.map(_.asAbilityLike).toSet
+    val ratings : Map[Ability, Dots] = typeableHierarchy.toSeq.flatMap(_.asRatings).toMap
+    val typeables : Map[Typeable, Type] = typeableHierarchy.toSeq.map(_.asType).toMap
+
+    triggerAbilityMatrixChange(
+      AbilityMatrix(
+        abilities = abilityLikes, ratings = ratings, types = typeables, specialties = input.specialties
+      )
+    )
+    println("Triggered EventEmitter with new AbilityMatrix")
   }
 
   def revertBtnPressed() : Unit = {
@@ -185,12 +209,12 @@ class AbilityComponent {
     selectedCaste = Some(caste)
     println(s"Caste changed to $caste")
     recalcFullTypes()
-    //TODO: trigger eventemitter
+    casteChange.emit(caste)
   }
 
   def triggerAbilityMatrixChange(changedMatrix : AbilityMatrix) : Unit = {
     println(s"Abilitymatrix changed to $changedMatrix")
-    //TODO: trigger eventemitter
+    abilitiesChange.emit(changedMatrix)
   }
 
   /*
@@ -220,8 +244,8 @@ class AbilityComponent {
 
    */
 
-  import scala.concurrent.ExecutionContext.Implicits.global
-  val f = Future {
-    inputChanged() //todo: call during OnChanges (once that is possible)
-  }
+
+  inputChanged()
+
+  override def ngOnChanges(changes: SimpleChanges): Unit = inputChanged()
 }

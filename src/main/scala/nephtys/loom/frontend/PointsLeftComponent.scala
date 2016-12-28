@@ -21,6 +21,7 @@ import angulate2.std.{@@@, Component}
 
 )
 class PointsLeftComponent {
+  //TODO: implement whole
   //use remark control for this
 
 
