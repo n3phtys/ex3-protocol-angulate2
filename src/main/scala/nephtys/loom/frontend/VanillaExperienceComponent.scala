@@ -1,5 +1,7 @@
 package nephtys.loom.frontend
 
+import angulate2.core.OnChanges.SimpleChanges
+import angulate2.core.{EventEmitter, OnChangesJS, Output}
 import angulate2.std._
 import nephtys.loom.protocol.vanilla.solar.Experiences
 import nephtys.loom.protocol.vanilla.solar.Experiences._
@@ -31,13 +33,13 @@ import scala.util.Try
       |You are therefore <label>Essence {{essence}}</label>
       |</p>
       |<p>
-      | <button (click)="endCGclicked()"  class="btn btn-success" *ngIf="! charGenFinished">Press this Button to permanently leave Character Generation. You cannot undo this step!</button>
+      | <button (click)="endCGclicked()"  class="btn btn-success" *ngIf="! charGenFinishedState">Press this Button to permanently leave Character Generation. You cannot undo this step!</button>
       |</p>
       |</div>
       |</div>
       |
       |
-      |<div class="panel panel-primary" *ngIf="charGenFinished">
+      |<div class="panel panel-primary" *ngIf="charGenFinishedState">
       |<div class="panel-heading">Manual changes to experience</div>
       |<div class="panel-body">
       |<div>
@@ -99,15 +101,17 @@ import scala.util.Try
     """.stripMargin)
 
 )
-class VanillaExperienceComponent {
-  //TODO: add manual gains and manual spendings via buttons
-  //TODO: show manual entries as collapsed list / log (LIFO)
+class VanillaExperienceComponent extends OnChangesJS{
+  //add manual gains and manual spendings via buttons
+  //show manual entries as collapsed list / log (LIFO)
 
   @Input
-  var experience : ExperienceBox = Experiences.mockBox
+  var input : ExperienceBox = Experiences.mockBox
+
+  var experience : ExperienceBox = input
 
   @Input
-  var charGenFinished : Boolean = false
+  var charGenFinishedState : Boolean = false
 
   var types : js.Array[ExperienceType] = js.Array()
   var possibleTypes : js.Array[ExperienceType] = Experiences.types.toJSArray
@@ -136,8 +140,8 @@ class VanillaExperienceComponent {
 
   def endCGclicked() : Unit = {
     if (org.scalajs.dom.window.confirm("Do you really want to permanently leave Character Generation? You cannot return to it.")) {
-      charGenFinished = true
-      charGenFinishEvent(charGenFinished)
+      charGenFinishedState = true
+      charGenFinishEvent(charGenFinishedState)
     }
   }
 
@@ -163,12 +167,19 @@ class VanillaExperienceComponent {
 
   inputChanged()
 
+  @Output
+  val experienceChange = new EventEmitter[ExperienceBox]()
+
+  @Output
+  val charGenFinished = new EventEmitter[Boolean]()
 
   def manualChangeEvent(eb : ExperienceBox) : Unit = {
-    //TODO: trigger eventemitter
+    experienceChange.emit(eb)
   }
 
   def charGenFinishEvent(finished : Boolean) : Unit = {
-    //TODO: trigger eventemitter
+    charGenFinished.emit(finished)
   }
+
+  override def ngOnChanges(changes: SimpleChanges): Unit = inputChanged()
 }

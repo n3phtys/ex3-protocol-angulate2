@@ -21,6 +21,9 @@ import angulate2.std.{@@@, Component}
 
 )
 class PointsLeftComponent {
+  //use remark control for this
+
+
   //this should get pinned somewhere on the side
 
   //it shows labels with all non-completely spent things current out of total
