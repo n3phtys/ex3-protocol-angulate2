@@ -15,7 +15,7 @@ class AbilityPack(var title : String, var typ : String, var abilities : js.Array
 
   var unique : Boolean = abilities.size == 1 && !addable
 
-  def asAbilityLike : AbilityLike with Typeable = if (addable) { //ability family
+  def asAbilityLike : AbilityLikeSpecialtyAble with Typeable = if (addable) { //ability family
     AbilityFamily(instances = abilities.toSeq.map(s => Ability(s)).toSet, familityName = title)
   } else if (abilities.length == 2) { //duo ability
     DuoAbilityGroup(Ability(abilities(0)), Ability(abilities(1)), title)

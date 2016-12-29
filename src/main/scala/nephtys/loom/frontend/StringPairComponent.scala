@@ -1,14 +1,13 @@
 package nephtys.loom.frontend
 
+import angulate2.core.OnChanges.SimpleChanges
+import angulate2.core.{EventEmitter, OnChangesJS}
 import nephtys.loom.protocol.vanilla.solar.Abilities.SpecialtyAble
-
-
 import angulate2.std._
 
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters._
 import scala.scalajs.js
-
 import scala.scalajs.js
 
 /**
@@ -37,36 +36,51 @@ import scala.scalajs.js
       |</ul>
     """.stripMargin
 )
-class StringPairComponent {
+class StringPairComponent extends OnChangesJS {
+
   //useable for specialties and for intimacies (as they are just a combobox AND a text field)
 
   @Input
   var title : String = "This is StringPair title"
 
-  @Input
-  var selectableValues : js.Array[String] = js.Array("Cat A", "Cat B", "Cat C")
-
-
-  @Input
-  var listOfEntries : js.Array[StringPair] = js.Array(
-    StringPair("Cat A", "Text A"),
-    StringPair("Cat B", "Text B")
-  )
-
-  var selectedValue : String = "Cat A"
-  var writtenValue : String = ""
-
-  //todo: input verifier function to disable plus button
-
-
-  //todo: on input changes, set everything anew
-
 
   @Input
   var canRemove : Boolean = true
 
+  @Input
+  var selectable : Seq[String] = Seq("Cat A", "Cat B", "Cat C")
 
-  //todo: trigger output
+  var selectableValues : js.Array[String] = js.Array()
+
+
+  @Input
+  var input : Seq[StringPair] = Seq(
+    StringPair("Cat A", "Text A"),
+    StringPair("Cat B", "Text B")
+  )
+
+  var listOfEntries : js.Array[StringPair] = js.Array()
+
+  @Output
+  var seqChange = new EventEmitter[Seq[StringPair]]()
+
+
+  var selectedValue : String = "Cat A"
+  var writtenValue : String = ""
+
+  def inputChanged() : Unit = {
+    selectableValues = selectable.toJSArray
+    listOfEntries = input.toJSArray
+    selectedValue = selectable.headOption.getOrElse("")
+    writtenValue = ""
+  }
+
+  inputChanged()
+
+  //todo: input verifier function to disable plus button
+
+
+
 
   def add() : Unit  = {
     println(s"writtenValue = $writtenValue")
@@ -74,7 +88,9 @@ class StringPairComponent {
 
     if (writtenValue.nonEmpty ) {
       listOfEntries.push(StringPair(selectedValue, writtenValue))
+      println(s"added element $writtenValue")
       writtenValue = ""
+      seqChange.emit(listOfEntries.toSeq)
     }
   }
 
@@ -82,7 +98,10 @@ class StringPairComponent {
     if (org.scalajs.dom.window.confirm("Do you really want to remove this item?")) {
       val r = listOfEntries.splice(index, 1)
       println(s"removed element $r")
+      seqChange.emit(listOfEntries.toSeq)
     }
   }
 
+
+  override def ngOnChanges(changes: SimpleChanges): Unit = inputChanged()
 }

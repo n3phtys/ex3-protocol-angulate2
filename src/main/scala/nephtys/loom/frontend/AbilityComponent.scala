@@ -167,7 +167,7 @@ class AbilityComponent extends OnChangesJS{
     //type change
     //subability change
 
-    val abilityLikes : Set[AbilityLike] = typeableHierarchy.toSeq.map(_.asAbilityLike).toSet
+    val abilityLikes : Set[AbilityLikeSpecialtyAble] = typeableHierarchy.toSeq.map(_.asAbilityLike).toSet
     val ratings : Map[Ability, Dots] = typeableHierarchy.toSeq.flatMap(_.asRatings).toMap
     val typeables : Map[Typeable, Type] = typeableHierarchy.toSeq.map(_.asType).toMap
 
