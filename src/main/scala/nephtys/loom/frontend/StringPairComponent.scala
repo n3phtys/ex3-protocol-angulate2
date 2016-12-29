@@ -17,7 +17,7 @@ import scala.scalajs.js
 @Component(
   selector = "string-pair-list",
   template =
-    """<h2>{{title}}</h2>
+    """<h3>{{title}}</h3>
       |<div class="form-inline">
       |<div class="form-group form-inline">
       |<label for="textinput">New

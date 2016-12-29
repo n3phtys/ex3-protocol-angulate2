@@ -1,6 +1,7 @@
 package nephtys.loom.frontend
 
-import angulate2.std.{@@@, Component}
+import angulate2.std._
+import nephtys.loom.protocol.vanilla.solar.Solar
 
 /**
   * Created by nephtys on 12/12/16.
@@ -21,6 +22,10 @@ import angulate2.std.{@@@, Component}
 
 )
 class PointsLeftComponent {
+
+  @Input
+  var character : Solar = _
+
   //TODO: implement whole
   //use remark control for this
 

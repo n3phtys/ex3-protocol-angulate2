@@ -18,7 +18,7 @@ import scala.scalajs.js
   */
 @Component(
   selector = "solar-attributes",
-  template = "<h3>solar-attributes are here</h3>" +
+  template = "<h3>Attributes</h3>" +
              """
                | <div class="container">
                | <div class="container-column">
