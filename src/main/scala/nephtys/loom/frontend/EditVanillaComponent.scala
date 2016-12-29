@@ -16,7 +16,7 @@ import scala.util.Try
 @Component(
   selector = "detail-edit-vanilla",
   template =
-    """<h2>Here you can edit a vanilla aggregate</h2>
+    """<h2 *ngIf="character">Customizing {{character.name}}</h2>
       |<experience-component></experience-component>
       |<abilities-caste-vanilla *ngIf="character" [input]="character.abilities" [caste]="character.caste" ></abilities-caste-vanilla>
       |<string-pair-list title="Specialties/Intimacies"></string-pair-list>
@@ -28,6 +28,8 @@ import scala.util.Try
 class EditVanillaComponent(  route: ActivatedRoute, vanillaAggregateService: VanillaAggregateService) extends OnInitJS{
 
   var character : Solar = _
+
+
 
   override def ngOnInit(): Unit = {
     val s = route.params.map[Option[Solar]]((params, i) => {
