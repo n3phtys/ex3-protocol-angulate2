@@ -3,6 +3,7 @@ package nephtys.loom.frontend
 import java.util.UUID
 import java.util.concurrent.atomic.AtomicLong
 
+import angulate2.std.Injectable
 import nephtys.dualframe.cqrs.client.{IDBConfig, IDBPersistenceService}
 import nephtys.loom.protocol.vanilla.solar.SolarProtocol.SolarCommand
 import upickle.default._
@@ -14,7 +15,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by nephtys on 12/16/16.
   */
+@Injectable
 class VanillaCommandQueueService(idb: IDBPersistenceService) {
+
+  println("VanillaCommandQueueService instantiated")
 
   implicit val idbConfig: IDBConfig = VanillaConstants.idbConfig
 
@@ -22,7 +26,7 @@ class VanillaCommandQueueService(idb: IDBPersistenceService) {
   private val inMemoryQueue : mutable.Queue[VanillaCommandPersistencePack] = mutable.Queue()
 
   //fill with values from indexedDB async after start
-  idb.getAllAsync().map(seq => seq.map(s => read[VanillaCommandPersistencePack](s)).sortBy(_.uniqueTimestamp)).foreach(
+  idb.getAllAsync(commandStore = true).map(seq => seq.map(s => read[VanillaCommandPersistencePack](s)).sortBy(_.uniqueTimestamp)).foreach(
     seq => seq.foreach(e => inMemoryQueue.:+(e))
   )
 
@@ -35,12 +39,12 @@ class VanillaCommandQueueService(idb: IDBPersistenceService) {
   def store(command : SolarCommand) : Future[UUID] = {
     val c = VanillaCommandPersistencePack(UUID.randomUUID(), newUniqueTimestamp(), command)
     inMemoryQueue.:+(c)
-    idb.setAsync(c.uuid, write(c)).map(f => c.uuid)
+    idb.setAsync(c.uuid, write(c), commandStore = true).map(f => c.uuid)
   }
 
   def setAsTransmittedAndRemove(seq : Seq[UUID]) : Future[Unit] = {
     val s : Seq[VanillaCommandPersistencePack] = onItsWayQueue.dequeueAll(e => seq.contains(e.uuid))
-    idb.removeSetAsync(seq)
+    idb.removeSetAsync(seq, commandStore = true)
   }
 
   /**

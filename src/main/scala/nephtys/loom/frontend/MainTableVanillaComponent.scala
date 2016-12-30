@@ -22,7 +22,9 @@ import scala.scalajs.js
       |</ul>
     """.stripMargin
 )
-class MainTableVanillaComponent(vanillaAggregateService: VanillaAggregateService, router : Router) {
+class MainTableVanillaComponent(vanillaAggregateService: VanillaMockAggregateService,
+                                vanillaInMemoryService: VanillaInMemoryService,
+                                router : Router) {
   var ids : js.Array[ID[Solar]] = js.Array[ID[Solar]]()
   vanillaAggregateService.allInstances.subscribe(m => ids = m.keys.toJSArray)
 

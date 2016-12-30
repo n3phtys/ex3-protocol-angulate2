@@ -1,6 +1,7 @@
 package nephtys.loom.frontend
 
 
+import angulate2.std.Injectable
 import nephtys.dualframe.cqrs.client.{IDBConfig, IDBPersistenceService, TokenService}
 import nephtys.loom.frontend.IncrementalChanges.{Deletion, Insertion, Update}
 import nephtys.loom.protocol.vanilla.solar.{Solar, SolarProtocol}
@@ -19,7 +20,10 @@ import scala.util.{Failure, Success, Try}
 /**
   * Created by nephtys on 12/16/16.
   */
+@Injectable
 class VanillaInMemoryService(idb: IDBPersistenceService) {
+
+  println("VanillaInMemoryService instantiated")
 
   implicit val idbConfig: IDBConfig = VanillaConstants.idbConfig
 
@@ -30,7 +34,7 @@ class VanillaInMemoryService(idb: IDBPersistenceService) {
   val changes : BehaviorSubject[Option[IncrementalChanges.Change]] = BehaviorSubject[Option[IncrementalChanges.Change]](None)
 
 
-  idb.getAllAsync().map(seq => seq.map(s => read[Solar](s)).map(s => (s.id, s)).toMap[ID[Solar], Solar]).foreach(newmap => {
+  idb.getAllAsync(commandStore = false).map(seq => seq.map(s => read[Solar](s)).map(s => (s.id, s)).toMap[ID[Solar], Solar]).foreach(newmap => {
     aggregateMap = newmap
     allCharacters = newmap.values.toJSArray
     newmap.keys.foreach(k => changes.next(Some(Insertion(k.id))))
@@ -53,16 +57,16 @@ class VanillaInMemoryService(idb: IDBPersistenceService) {
           case Deletion(id) => {
             val index : Int = (0 until allCharacters.length).find(i => allCharacters(0).id.id == id).getOrElse(0)
             allCharacters.splice(index, 1)
-            idb.removeAsync(id).map(f => Success(event))
+            idb.removeAsync(id, commandStore = false).map(f => Success(event))
           }
           case Insertion(id) => {
             allCharacters.push(newmap(ID[Solar](id)))
-            idb.setAsync(id, write(newmap(ID[Solar](id)))).map(f => Success(event))
+            idb.setAsync(id, write(newmap(ID[Solar](id))), commandStore = false).map(f => Success(event))
           }
           case Update(id) => {
             val index : Int = (0 until allCharacters.length).find(i => allCharacters(0).id.id == id).getOrElse(0)
             allCharacters(index) = newmap(ID[Solar](id))
-            idb.setAsync(id, write(newmap(ID[Solar](id)))).map(f => Success(event))
+            idb.setAsync(id, write(newmap(ID[Solar](id))), commandStore = false).map(f => Success(event))
           }
         }
       }
@@ -74,7 +78,7 @@ class VanillaInMemoryService(idb: IDBPersistenceService) {
     val newmap : Map[ID[Solar], Solar] = seq.map(s => (s.id, s)).toMap
     aggregateMap = newmap
     allCharacters = newmap.values.toJSArray
-    idb.setSetAsync(newmap.map(a => (a._1.id, write(a._2))))
+    idb.setSetAsync(newmap.map(a => (a._1.id, write(a._2))), commandStore = false)
   }
 
   protected def findDiffSingle(event : SolarEvent) : IncrementalChanges.Change = event match {

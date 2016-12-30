@@ -3,6 +3,7 @@ package nephtys.loom.frontend
 
 import java.util.concurrent.TimeUnit
 
+import angulate2.std.Injectable
 import nephtys.dualframe.cqrs.client.HttpService
 import nephtys.dualframe.cqrs.client.httphelper.HttpResults
 import nephtys.loom.protocol.vanilla.solar.{Solar, SolarProtocol}
@@ -20,7 +21,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 /**
   * Created by nephtys on 12/16/16.
   */
+@Injectable
 class VanillaControlService(aggregateService: VanillaInMemoryService, httpService: HttpService, commandService: VanillaCommandQueueService) {
+
+  println("VanillaControlService instantiated")
 
   protected val pushSubject : BehaviorSubject[Boolean] = BehaviorSubject[Boolean](true)
   protected val debounced: Observable[Boolean] = pushSubject.debounceTime(FiniteDuration(3, TimeUnit.SECONDS))

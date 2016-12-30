@@ -52,7 +52,7 @@ import scala.util.Try
       |<points-left-vanilla [character]="character"></points-left-vanilla>
     """.stripMargin
 )
-class EditVanillaComponent(  route: ActivatedRoute, vanillaAggregateService: VanillaAggregateService) extends OnInitJS{
+class EditVanillaComponent(  route: ActivatedRoute, vanillaAggregateService: VanillaMockAggregateService) extends OnInitJS{
 
   var character : Solar = _
 

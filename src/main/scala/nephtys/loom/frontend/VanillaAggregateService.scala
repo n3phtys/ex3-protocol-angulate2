@@ -13,7 +13,7 @@ import rxscalajs.subjects.BehaviorSubject
   * Created by nephtys on 12/8/16.
   */
 @Injectable
-class VanillaAggregateService {
+class VanillaMockAggregateService {
 
   private def ownermock = Email("christopher.kaag@gmail.com")
   private def mocks = Seq(
