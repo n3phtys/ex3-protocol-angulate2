@@ -3,7 +3,7 @@ package nephtys.loom.frontend
 import angulate2.core.OnChanges.SimpleChanges
 import angulate2.core.OnChangesJS
 import angulate2.std._
-import nephtys.loom.protocol.vanilla.solar.Solar
+import nephtys.loom.protocol.vanilla.solar.{Abilities, Intimacies, Solar}
 
 import scala.collection.immutable.SortedSet
 
@@ -33,7 +33,7 @@ class PointsLeftComponent extends OnChangesJS{
 
 
   @Input
-  var title : String = "You may spend:"
+  var title : String = "Open for spending:"
 
   @Input
   var character : Solar = _
@@ -51,9 +51,24 @@ class PointsLeftComponent extends OnChangesJS{
 
   private def generateLowPrio(solar : Solar) : Seq[String] = {
     if (solar.stillInCharGen) {
-      val intimacies : Seq[String] = Seq.empty
-      val bonuspoints : Seq[String] = Seq.empty
-      val specialties : Seq[String] = Seq.empty
+      val intimacies : Seq[String] = {
+        val total = solar.intimacies.size
+        val defining = solar.intimacies.count(s => s._2 == Intimacies.Defining)
+        val major = solar.intimacies.count(s => s._2 == Intimacies.Major)
+        if(total < 4 || defining < 1 || major < 1) {
+          Seq(s"You should take at least ${4 - total} more Intimacies, and make sure to have at least one Defining and one Major")
+        } else Seq.empty
+      }
+      val bonuspoints : Seq[String] = {
+        if (solar.bonusPointsUnspent > 0) {
+          Seq(s"Bonus Points spent: ${15 - solar.bonusPointsUnspent}/15")
+        } else Seq.empty
+      }
+      val specialties : Seq[String] = {
+        if (solar.abilities.specialties.values.flatten.size < 4) {
+          Seq(s"Specialties: ${solar.abilities.specialties.values.flatten.size}/4")
+        } else Seq.empty
+      }
 
       intimacies ++ specialties ++ bonuspoints
     } else {
@@ -80,23 +95,46 @@ class PointsLeftComponent extends OnChangesJS{
 
       }
 
-      val abilityTypes: Seq[String] = Seq.empty
-      val abilities: Seq[String] = Seq.empty
+      val abilityTypes: Seq[String] = {
+        val favored : Int = solar.abilities.types.values.count(Abilities.Favored == _)
+        val caste : Int = solar.abilities.types.values.count(Abilities.Caste == _)
+        val supernal : Boolean = solar.abilities.types.values.exists(Abilities.Supernal == _)
+        (if (!supernal) {Seq("Select one Supernal Ability")} else Seq.empty) ++ (if (caste < 4) {Seq(s"Select ${4 - caste} more Caste Abilities")} else Seq.empty) ++ (if (favored < 5) {Seq(s"Select ${5 - favored} more Favored Abilities")} else Seq.empty)
+      }
+      val abilities: Seq[String] = {
+        val sum = solar.abilities.spentWithFreePoints
+        if (sum < 28) {
+          Seq(s"Ability Dots: $sum/28")
+        } else Seq.empty
+      }
 
-      val merits : Seq[String] = Seq.empty
+      val merits : Seq[String] = {
+        val sum = solar.merits.map(_.rating.number.toInt).sum
+        if (sum < 10) {
+          Seq(s"Merits: $sum/10")
+        } else Seq.empty
+      }
 
-      val charms : Seq[String] = Seq.empty
+      val charms : Seq[String] = {
+        if (solar.charms.size < 15) {
+          Seq(s"Charms: ${solar.charms.size}/15")
+        } else Seq.empty
+      }
 
       attributes ++ abilityTypes ++ abilities ++ merits ++ charms
 
     } else {
-      val experiences : Seq[String] = Seq.empty
+      val experiences : Seq[String] = {
+        val k = solar.experience.formattedLeft
+        if (k.nonEmpty) {
+          k.map(a => s"You have ${a._2} ${a._1.toString} left to spend")
+        } else Seq.empty
+      }
 
       experiences
     }
   }
 
-  //TODO: implement whole
   //use remark control for this
 
 
