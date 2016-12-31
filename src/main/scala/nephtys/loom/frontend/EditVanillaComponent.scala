@@ -1,6 +1,6 @@
 package nephtys.loom.frontend
 
-import java.util.UUID
+import java.util.{Date, UUID}
 import java.util.concurrent.TimeUnit
 
 import angulate2.core.OnInitJS
@@ -62,7 +62,7 @@ import scala.util.Try
       |<points-left-vanilla  *ngIf="character"  [character]="character"></points-left-vanilla>
     """.stripMargin
 )
-class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: VanillaInMemoryService, vanillaAggregateService: VanillaMockAggregateService, vanillaControlService: VanillaControlService) extends OnInitJS{
+class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: VanillaInMemoryService, vanillaControlService: VanillaControlService) extends OnInitJS{
 
   var character : Solar = _
 
@@ -70,11 +70,13 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
 
 
   private def reselectCharacter(id : ID[Solar]) : Unit = {
-    println("Character changed and reloaded inside Edit Component")
-    vanillaInMemoryService.get(id).foreach(solar => setCharacter(solar))
+    println(new Date().toString + ": Character changed and reloaded inside Edit Component")
+    val o = vanillaInMemoryService.get(id)
+    println(s"searching aggregate with id $id, result = $o")
+      o.foreach(solar => setCharacter(solar))
   }
 
-  private val subscription = vanillaInMemoryService.changes.combineLatest(selected).filter(a => a._1.isEmpty || a._2.map(_.id).contains(a._1.get.id)).debounceTime(FiniteDuration(200, TimeUnit.MILLISECONDS)).distinct.subscribe(a => a._2.foreach(id => reselectCharacter(id)))
+  private val subscription = vanillaInMemoryService.changes.combineLatest(selected).filter(a => a._1.isEmpty || a._2.map(_.id).contains(a._1.get.id)).debounceTime(FiniteDuration(200, TimeUnit.MILLISECONDS)).subscribe(a => a._2.foreach(id => reselectCharacter(id)))
 
   //after enqueueCommands returned one should reset the character variable to the new value, or listen to debounced changes
 
@@ -124,21 +126,24 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
     val map = newmap.toMap
       println("newmap changed in editvanilla component")
     val c : mutable.Buffer[SolarCommand] = mutable.Buffer()
+    println(s"newmap: $newmap")
+    println(s"character: ${character.name} / ${character.player} / ${character.concept} / ${character.anima} / ${character.limitTrigger}")
     if (!map("Name").equals(character.name)) {
       c += SetName(character.id, name = map("Name"))
     }
-    if (!map("Anima").equals(character.name)) {
+    if (!map("Anima").equals(character.anima)) {
       c += SetAnima(character.id, anima = map("Anima"))
     }
-    if (!map("Concept").equals(character.name)) {
+    if (!map("Concept").equals(character.concept)) {
       c += SetConcept(character.id, concept = map("Concept"))
     }
-    if (!map("Player").equals(character.name)) {
+    if (!map("Player").equals(character.player)) {
       c += SetPlayer(character.id, player = map("Player"))
     }
-    if (!map("Limit Trigger").equals(character.name)) {
+    if (!map("Limit Trigger").equals(character.limitTrigger.trigger)) {
       c += SetLimitTrigger(character.id, limitTrigger = map("Limit Trigger"))
     }
+    println(s"calculated based on meta map, following changes: $c")
     val f = vanillaControlService.enqueueCommands(c)
   }
 
@@ -203,6 +208,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   //left-over
 
   private def setCharacter(solar : Solar ) : Unit = {
+    println(s"setCharacter ${solar.id} called in edit vanilla component")
     character = solar
     metamap = Seq("Name" -> solar.name, "Player" -> solar.player, "Concept" -> solar.concept, "Anima" -> solar.anima, "Limit Trigger" -> solar.limitTrigger.trigger)
     specialties = solar.abilities.specialties.flatMap(a => a._2.map(b => StringPair(a._1.name, b.name))).toSeq
@@ -211,12 +217,15 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   }
 
   override def ngOnInit(): Unit = {
+    println("ngOnInit called in edit vanilla component")
     val s = route.params.map[ID[Solar]]((params, i) => {
+      println(s"Param changed to ${params("id")}")
       val id : String = params("id")
       ID[Solar](UUID.fromString(id))
     }
       )
       .subscribe(o => {
+        reselectCharacter(o)
         selected.next(Some(o))
       })
   }

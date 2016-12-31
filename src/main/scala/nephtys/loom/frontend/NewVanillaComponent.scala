@@ -37,8 +37,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 )
 class NewVanillaComponent(router: Router,
                           tokenService: TokenService,
-                          vanillaControlService: VanillaControlService,
-                          vanillaAggregateService: VanillaMockAggregateService) extends OnInitJS {
+                          vanillaControlService: VanillaControlService) extends OnInitJS {
 
   var writtenName : String = ""
 

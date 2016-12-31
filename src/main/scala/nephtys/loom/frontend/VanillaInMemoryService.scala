@@ -23,6 +23,7 @@ import scala.util.{Failure, Success, Try}
 @Injectable
 class VanillaInMemoryService(idb: IDBPersistenceService) {
 
+
   println("VanillaInMemoryService instantiated")
 
   implicit val idbConfig: IDBConfig = VanillaConstants.idbConfig
@@ -40,8 +41,13 @@ class VanillaInMemoryService(idb: IDBPersistenceService) {
     newmap.keys.foreach(k => changes.next(Some(Insertion(k.id))))
   })
 
+  def keys : IndexedSeq[ID[Solar]] = aggregateMap.keys.toIndexedSeq
 
-  def get(id : ID[Solar]) : Option[Solar] = aggregateMap.get(id)
+
+  def get(id : ID[Solar]) : Option[Solar] = {
+    println("Aggregate map is : " + aggregateMap.toString)
+    aggregateMap.get(id)
+  }
 
   def checkCommandLocally(command : SolarCommand) : Boolean = command.internalSolarValidate(aggregateMap).isSuccess
   def applyCommandLocally(command : SolarCommand) : Future[Try[SolarEvent]] = {

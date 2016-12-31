@@ -1,9 +1,15 @@
 package nephtys.loom.frontend
 
+import java.util.UUID
+
+import angulate2.core.OnInitJS
 import angulate2.router.Router
 import angulate2.std.Component
+import nephtys.loom.frontend.IncrementalChanges.{Deletion, Insertion}
 import nephtys.loom.protocol.vanilla.solar.Solar
 import org.nephtys.loom.generic.protocol.InternalStructures.ID
+
+import scala.collection.mutable
 import scala.scalajs.js.JSConverters._
 import scala.scalajs.js
 
@@ -15,21 +21,19 @@ import scala.scalajs.js
   template =
     """<h2>Here will be the vanilla main data table</h2>
       |<ul>
-      |<li *ngFor="let instance of ids; let i = index">
-      | <button type="button" (click)="idButtonClicked(instance)" class="btn btn-primary"
-      |      >{{i}}. {{instance}}</button>
+      |<li *ngFor="let instance of vanillaInMemoryService.allCharacters; let i = index">
+      | <button type="button" (click)="idButtonClicked(instance.id)" class="btn btn-primary"
+      |      >{{i}}. {{instance.id}}</button>
       |</li>
       |</ul>
     """.stripMargin
 )
-class MainTableVanillaComponent(vanillaAggregateService: VanillaMockAggregateService,
-                                vanillaInMemoryService: VanillaInMemoryService,
+class MainTableVanillaComponent(val vanillaInMemoryService: VanillaInMemoryService,
                                 router : Router) {
-  var ids : js.Array[ID[Solar]] = js.Array[ID[Solar]]()
-  vanillaAggregateService.allInstances.subscribe(m => ids = m.keys.toJSArray)
 
   def idButtonClicked(id : ID[Solar]) : Unit = {
     println(s"pressed Button with id = $id")
     val r : rxjs.RxPromise[Boolean] = router.navigate(js.Array(s"/detail/vanilla/${id.id}"))
   }
+
 }
