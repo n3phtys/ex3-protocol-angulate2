@@ -7,6 +7,6 @@ import scala.scalajs.js.annotation.{JSExport, JSExportAll}
   */
 @JSExport
 @JSExportAll
-case class StringPair(selected : String, written : String) {
+final case class StringPair(selected : String, written : String) {
 
 }
