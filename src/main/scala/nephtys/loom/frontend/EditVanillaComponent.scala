@@ -4,7 +4,7 @@ import java.util.{Date, UUID}
 import java.util.concurrent.TimeUnit
 
 import angulate2.core.OnInitJS
-import angulate2.router.ActivatedRoute
+import angulate2.router.{ActivatedRoute, Router}
 import angulate2.std.{Component, OnInit}
 import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
 import nephtys.loom.protocol.vanilla.solar.Abilities.{AbilityMatrix, Specialty}
@@ -19,6 +19,7 @@ import rxscalajs.subjects.BehaviorSubject
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.{FiniteDuration, TimeUnit}
+import scala.scalajs.js
 import scala.util.Try
 
 /**
@@ -68,7 +69,7 @@ import scala.util.Try
       |<points-left-vanilla  *ngIf="character"  [character]="character"></points-left-vanilla>
     """.stripMargin
 )
-class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: VanillaInMemoryService, vanillaControlService: VanillaControlService) extends OnInitJS{
+class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: VanillaInMemoryService, vanillaControlService: VanillaControlService, router : Router) extends OnInitJS{
 
   var character : Solar = _
 
@@ -106,6 +107,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   def aggregateDeleted(yes : Boolean) : Unit = {
     if (yes) {
       val f = vanillaControlService.enqueueCommand(Delete(id))
+      val r = router.navigate(js.Array("/"))
     }
   }
 
@@ -114,18 +116,18 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   }
 
   def intimaciesChanged(newIntimacies : Seq[StringPair]) : Unit = {
-    println(s"Intimacies changed to $newIntimacies")
     val innermap : Map[String, String] = newIntimacies.map(a => (a.written, a.selected)).toMap
     val add : Seq[SolarCommand] = newIntimacies.filter(a => !character.intimacies.get(a.written).exists(b => b != Intimacies.parse(a.selected))).map(a => SetIntimacy(id, a.written, Some(Intimacies.parse(a.selected))))
-    val remove : Seq[SolarCommand] =  character.intimacies.toSeq.filterNot(a => innermap.contains(a._1)).map(a => SetIntimacy(id, a._1, None))                  //character.intimacies.toSeq.filter(a => !newSpecialties.contains(StringPair(selected = a._1.name, written = a._2.name))).map(a => RemoveSpecialty(id, a._1, a._2.name))
-    val f = vanillaControlService.enqueueCommands(remove).flatMap(a => vanillaControlService.enqueueCommands(remove))
+    val remove : Seq[SolarCommand] =  character.intimacies.toSeq.filterNot(a => innermap.contains(a._1)).map(a => SetIntimacy(id, a._1, None))
+    println(s"Intimacies changed to $innermap with add = $add and remove $remove")
+    val f = vanillaControlService.enqueueCommands(remove ++ add)
   }
 
   def specialtiesChanged(newSpecialties : Seq[StringPair]) : Unit = {
     println(s"Specialties changed to $newSpecialties")
     val add : Seq[SolarCommand] = newSpecialties.filter(a => character.abilities.specialties.get(Abilities.specialtyAble(a.selected)).filter(b => b.contains(Specialty(a.written))).isEmpty).map(a => AddSpecialty(id, specialtyAble = Abilities.specialtyAble(a.selected), title = a.written))
     val remove : Seq[SolarCommand] = character.abilities.specialties.toSeq.flatMap(a => a._2.map(b => (a._1, b))).filter(a => !newSpecialties.contains(StringPair(selected = a._1.name, written = a._2.name))).map(a => RemoveSpecialty(id, a._1, a._2.name))
-    val f = vanillaControlService.enqueueCommands(remove).flatMap(a => vanillaControlService.enqueueCommands(remove))
+    val f = vanillaControlService.enqueueCommands(remove ++ add)
   }
 
   def metaMapChanged(newmap : Seq[(String, String)]) : Unit = {
@@ -204,7 +206,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   //attribute
   //ability
   //specialties
-  //merit
+  //TODO: merits!
   //willpower
   //intimacies
   //TODO: (charms)
