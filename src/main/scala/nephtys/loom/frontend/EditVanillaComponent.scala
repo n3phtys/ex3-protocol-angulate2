@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit
 import angulate2.core.OnInitJS
 import angulate2.router.ActivatedRoute
 import angulate2.std.{Component, OnInit}
-import nephtys.dualframe.cqrs.client.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
+import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
 import nephtys.loom.protocol.vanilla.solar.Abilities.{AbilityMatrix, Specialty}
 import nephtys.loom.protocol.vanilla.solar.Attributes.AttributeBlock
 import nephtys.loom.protocol.vanilla.solar.Experiences.ExperienceBox
@@ -140,7 +140,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
     if (!map("Player").equals(character.player)) {
       c += SetPlayer(character.id, player = map("Player"))
     }
-    if (!map("Limit Trigger").equals(character.limitTrigger.trigger)) {
+    if (!map("Limit Trigger").equals(character.limitTrigger)) {
       c += SetLimitTrigger(character.id, limitTrigger = map("Limit Trigger"))
     }
     println(s"calculated based on meta map, following changes: $c")
@@ -210,7 +210,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   private def setCharacter(solar : Solar ) : Unit = {
     println(s"setCharacter ${solar.id} called in edit vanilla component")
     character = solar
-    metamap = Seq("Name" -> solar.name, "Player" -> solar.player, "Concept" -> solar.concept, "Anima" -> solar.anima, "Limit Trigger" -> solar.limitTrigger.trigger)
+    metamap = Seq("Name" -> solar.name, "Player" -> solar.player, "Concept" -> solar.concept, "Anima" -> solar.anima, "Limit Trigger" -> solar.limitTrigger)
     specialties = solar.abilities.specialties.flatMap(a => a._2.map(b => StringPair(a._1.name, b.name))).toSeq
     possibleAbilities = solar.abilities.specialtyAbles
     intimacies = solar.intimacies.map(a => StringPair(selected = a._2.toString, written = a._1)).toSeq
