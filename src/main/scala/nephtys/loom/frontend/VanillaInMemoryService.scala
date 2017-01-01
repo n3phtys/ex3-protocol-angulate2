@@ -21,7 +21,7 @@ import scala.util.{Failure, Success, Try}
   * Created by nephtys on 12/16/16.
   */
 @Injectable
-class VanillaInMemoryService(idb: IDBPersistenceService) {
+class VanillaInMemoryService(idb: IDBPersistenceService, tokenService: TokenService) {
 
 
   println("VanillaInMemoryService instantiated")
@@ -49,9 +49,9 @@ class VanillaInMemoryService(idb: IDBPersistenceService) {
     aggregateMap.get(id)
   }
 
-  def checkCommandLocally(command : SolarCommand) : Boolean = command.internalSolarValidate(aggregateMap).isSuccess
+  def checkCommandLocally(command : SolarCommand) : Boolean = command.validate(tokenService.getCurrentEmail, aggregateMap).isSuccess
   def applyCommandLocally(command : SolarCommand) : Future[Try[SolarEvent]] = {
-    val eventTry = command.internalSolarValidate(aggregateMap)
+    val eventTry : Try[SolarEvent] = command.validate(tokenService.getCurrentEmail, aggregateMap).asInstanceOf[Try[SolarEvent]]
     eventTry match {
       case Success(event) => {
         val diff = findDiffSingle(event)
