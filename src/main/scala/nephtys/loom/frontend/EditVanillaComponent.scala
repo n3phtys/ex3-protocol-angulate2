@@ -6,19 +6,23 @@ import java.util.concurrent.TimeUnit
 import angulate2.core.OnInitJS
 import angulate2.router.{ActivatedRoute, Router}
 import angulate2.std.{Component, OnInit}
+import nephtys.dualframe.cqrs.client.{DottedStringPair, DottedStringPairChange}
+import nephtys.dualframe.cqrs.client.DottedStringPairChange.DottedStringPairChange
 import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
 import nephtys.loom.protocol.vanilla.solar.Abilities.{AbilityMatrix, Specialty}
 import nephtys.loom.protocol.vanilla.solar.Attributes.AttributeBlock
 import nephtys.loom.protocol.vanilla.solar.Experiences.ExperienceBox
 import nephtys.loom.protocol.vanilla.solar.Misc.Caste
 import nephtys.loom.protocol.vanilla.solar.SolarProtocol._
-import nephtys.loom.protocol.vanilla.solar.{Abilities, Intimacies, Solar}
+import nephtys.loom.protocol.vanilla.solar.{Abilities, Intimacies, Merits, Solar}
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 import rxscalajs.subjects.BehaviorSubject
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.{FiniteDuration, TimeUnit}
+import scala.scalajs.js
+import scala.scalajs.js.JSConverters._
 import scala.scalajs.js
 import scala.util.Try
 
@@ -45,6 +49,12 @@ import scala.util.Try
       |<string-pair-list title="Specialties"
       |[input]="specialties" [selectable]="possibleAbilities" (seqChange)="specialtiesChanged($event)"
       |></string-pair-list>
+      |
+      |<dotted-string-list title="Merits"
+      |[selectableValues]="meritcategories"
+      |[input]="meritsAsPairs"
+      |(seqChange)="meritPairsChanged($event)"
+      |></dotted-string-list>
       |
       |<h3>Permanent Willpower</h3>
       |<dot-control name="Willpower"  *ngIf="character"  color="green" [max]="10" [min]="5" [value]="character.willpowerDots" (valueSelected)="willpowerChanged($event)"></dot-control>
@@ -94,6 +104,8 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   var possibleAbilities : Seq[String] = Seq.empty
   var possibleIntimacyIntensities : Seq[String] = Intimacies.values.map(_.toString)
   var metamap : Seq[(String, String)] = Seq.empty
+  var meritsAsPairs : IndexedSeq[DottedStringPair] = IndexedSeq.empty
+  val meritcategories : js.Array[String] = (Merits.availableCategories.map(_.string) ++ IndexedSeq("Other")).toJSArray
 
 
   def publicStateChanged(b : Boolean) : Unit = {
@@ -113,6 +125,15 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
 
   def ownerChanged(owner : Email) : Unit = {
     val f = vanillaControlService.enqueueCommand(SetOwner(id, owner))
+  }
+
+  def meritPairsChanged(change : DottedStringPairChange) : Unit = {
+    println(s"Merit pairs changed via $change")
+    val f = vanillaControlService.enqueueCommand( change match {
+      case DottedStringPairChange.Insert(value) => AddMerit(id, value.title, value.category)
+      case DottedStringPairChange.Remove(index) => ChangeMerit(id, index, None)
+      case DottedStringPairChange.Edit(index, value) => ChangeMerit(id, index, Some(value.rating))
+    })
   }
 
   def intimaciesChanged(newIntimacies : Seq[StringPair]) : Unit = {
@@ -222,6 +243,8 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
     specialties = solar.abilities.specialties.flatMap(a => a._2.map(b => StringPair(a._1.name, b.name))).toSeq
     possibleAbilities = solar.abilities.specialtyAbles
     intimacies = solar.intimacies.map(a => StringPair(selected = a._2.toString, written = a._1)).toSeq
+    meritsAsPairs = solar.merits.map(m => DottedStringPair(category = m.category.map(_.string).getOrElse(""), title = m.name, rating = m.rating.number.toInt)).toIndexedSeq
+
   }
 
   override def ngOnInit(): Unit = {
