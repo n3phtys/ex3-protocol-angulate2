@@ -98,6 +98,10 @@ import scala.util.Try
       |.form-inline > * {
       |   margin:15px 15px;
       |}
+      |.btn{
+      |white-space:normal !important;
+      |    /*max-width:200px;*/
+      |}
     """.stripMargin)
 
 )

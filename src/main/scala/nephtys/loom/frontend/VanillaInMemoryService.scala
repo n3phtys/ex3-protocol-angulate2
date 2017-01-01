@@ -45,7 +45,7 @@ class VanillaInMemoryService(idb: IDBPersistenceService, tokenService: TokenServ
 
 
   def get(id : ID[Solar]) : Option[Solar] = {
-    println("Aggregate map is : " + aggregateMap.toString)
+    //println("Aggregate map is : " + aggregateMap.toString)
     aggregateMap.get(id)
   }
 

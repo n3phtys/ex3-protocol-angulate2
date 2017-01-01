@@ -58,7 +58,13 @@ import scala.util.Try
       | [input]="character.experience"  [charGenFinishedState]="! character.stillInCharGen"
       | (charGenFinished)="charGenStateChange($event)" (experienceChange)="experienceBlockChanged($event)"
       |></experience-component>
-      |<div> full: {{character}} </div>
+      |<div class="container">
+      |  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Full Solar:</button>
+      |  <div id="demo" class="collapse">
+      | {{character}}
+      |  </div>
+      |</div>
+      |<!--div> full: {{character}} </div-->
       |<points-left-vanilla  *ngIf="character"  [character]="character"></points-left-vanilla>
     """.stripMargin
 )
