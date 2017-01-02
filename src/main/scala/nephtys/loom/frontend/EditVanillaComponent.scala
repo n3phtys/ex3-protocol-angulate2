@@ -178,7 +178,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
 
   def experienceBlockChanged(value : ExperienceBox) : Unit = {
     println(s"Experience changed to $value")
-    val f = vanillaControlService.enqueueCommands(diff(character.experience, value))
+    val f = vanillaControlService.enqueueCommands(diff(character.id,character.experience, value))
   }
   def charGenStateChange(finished : Boolean) : Unit = {
     println(s"CharGen finished = $finished")
@@ -189,7 +189,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
 
   def abilityChanged(value : AbilityMatrix) : Unit = {
     println(s"Abilities changed to $value")
-    val f = vanillaControlService.enqueueCommands(diff(character.abilities, value))
+    val f = vanillaControlService.enqueueCommands(diff(character.id, character.abilities, value))
   }
 
   def casteChanged(value : Caste) : Unit =  {
@@ -205,7 +205,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
 
   def attributeBlockChanged(newblock : AttributeBlock): Unit = {
       println(s"new AttribtueBlock $newblock")
-    val f = vanillaControlService.enqueueCommands(diff(character.attributes, newblock))
+    val f = vanillaControlService.enqueueCommands(diff(character.id,character.attributes, newblock))
   }
 
   var notes : Seq[String] = Seq.empty
