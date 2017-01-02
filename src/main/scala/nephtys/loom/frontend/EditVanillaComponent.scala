@@ -227,7 +227,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   //attribute
   //ability
   //specialties
-  //TODO: merits!
+  //merits
   //willpower
   //intimacies
   //TODO: (charms)
