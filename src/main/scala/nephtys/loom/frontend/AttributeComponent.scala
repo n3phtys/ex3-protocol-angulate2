@@ -94,8 +94,12 @@ class AttributeComponent extends OnChangesJS {
   def scoreChange(attribute : Int, newValue : Int) : Unit = {
     println(s"Changing in Attribute index $attribute to value $newValue")
     attributeMap(attribute) = newValue
-    val t = attributes.block.zipWithIndex.map(a => AttributeRating(a._1.attribute, Dots(newValue.toByte)))
-    change.emit(AttributeBlock(t))
+    val t = attributes.block.zipWithIndex.map(a => if (a._2 == attribute) {
+      AttributeRating(a._1.attribute, Dots(newValue.toByte))
+    } else {
+      a._1
+    })
+    change.emit(AttributeBlock(t, attributes.ordering))
   }
 
   val str = 0
