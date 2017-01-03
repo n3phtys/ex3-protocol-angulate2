@@ -42,11 +42,11 @@ import scala.scalajs.js.Array
       |        </option>
       |    </select>
       |    <label *ngIf="! pack.unique">{{pack.title}}</label>
-      |<dot-control *ngIf="pack.unique" (selectedValue)="ratingChanged(i,0,$event)" color="purple" [name]="pack.title" [value]="pack.ratings[0]"></dot-control>
+      |<dot-control *ngIf="pack.unique" [allowInconsistentState]="true"  (valueSelected)="ratingChanged(i,0,$event)" color="purple" [name]="pack.title" [value]="pack.ratings[0]"></dot-control>
       |<ol *ngIf="! pack.unique">
       |<li *ngFor="let ability of pack.abilities; let k = index" >
       |<div>
-      |<dot-control [name]="ability" (selectedValue)="ratingChanged(i,k,$event)"  color="purple" [value]="pack.ratings[k]">
+      |<dot-control [name]="ability" [allowInconsistentState]="true" (valueSelected)="ratingChanged(i,k,$event)"  color="purple" [value]="pack.ratings[k]">
       |</dot-control>
       |</div></li>
       |</ol>
@@ -132,6 +132,8 @@ class AbilityComponent extends OnChangesJS{
 
 
   def ratingChanged(indexOfTypeable : Int, indexOfSubability : Int, newValue : Int) : Unit = {
+
+    println(s"ratingChanged indexTypeable = $indexOfTypeable with subability = $indexOfSubability and newvalue = $newValue")
     typeableHierarchy(indexOfTypeable).ratings(indexOfSubability) = newValue
   }
 
@@ -170,6 +172,8 @@ class AbilityComponent extends OnChangesJS{
     val abilityLikes : Set[AbilityLikeSpecialtyAble] = typeableHierarchy.toSeq.map(_.asAbilityLike).toSet
     val ratings : Map[Ability, Dots] = typeableHierarchy.toSeq.flatMap(_.asRatings).toMap
     val typeables : Map[Typeable, Type] = typeableHierarchy.toSeq.map(_.asType).toMap
+
+    println(s"ratings clicked $ratings")
 
     triggerAbilityMatrixChange(
       AbilityMatrix(
