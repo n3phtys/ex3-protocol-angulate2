@@ -9,7 +9,7 @@ import angulate2.std.{Component, OnInit}
 import nephtys.dualframe.cqrs.client.{DottedStringPair, DottedStringPairChange}
 import nephtys.dualframe.cqrs.client.DottedStringPairChange.DottedStringPairChange
 import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
-import nephtys.loom.protocol.vanilla.solar.Abilities.{AbilityMatrix, Specialty}
+import nephtys.loom.protocol.vanilla.solar.Abilities.{AbilityLikeSpecialtyAble, AbilityMatrix, Specialty}
 import nephtys.loom.protocol.vanilla.solar.Attributes.AttributeBlock
 import nephtys.loom.protocol.vanilla.solar.Experiences.ExperienceBox
 import nephtys.loom.protocol.vanilla.solar.Misc.Caste
@@ -147,7 +147,8 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   def specialtiesChanged(newSpecialties : Seq[StringPair]) : Unit = {
     println(s"Specialties changed to $newSpecialties")
     val add : Seq[SolarCommand] = newSpecialties.filter(a => character.abilities.specialties.get(Abilities.specialtyAble(a.selected)).filter(b => b.contains(Specialty(a.written))).isEmpty).map(a => AddSpecialty(id, specialtyAble = Abilities.specialtyAble(a.selected), title = a.written))
-    val remove : Seq[SolarCommand] = character.abilities.specialties.toSeq.flatMap(a => a._2.map(b => (a._1, b))).filter(a => !newSpecialties.contains(StringPair(selected = a._1.name, written = a._2.name))).map(a => RemoveSpecialty(id, a._1, a._2.name))
+    val remove : Seq[SolarCommand] = character.abilities.specialties.toSeq.flatMap(a => a._2.map(b => (a._1, b))).filter(a => !newSpecialties.contains(StringPair(selected = a._1.name, written = a._2.name))).map(a => RemoveSpecialty(id, a._1.asInstanceOf[AbilityLikeSpecialtyAble], a._2.name))
+    println(s"add = $add and remove = $remove")
     val f = vanillaControlService.enqueueCommands(remove ++ add)
   }
 
