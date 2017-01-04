@@ -1,7 +1,7 @@
 package nephtys.loom.frontend
 
 import angulate2.core.OnChanges.SimpleChanges
-import angulate2.core.{EventEmitter, OnChangesJS, Output}
+import angulate2.core.{EventEmitter, Output}
 import angulate2.std._
 import nephtys.loom.protocol.vanilla.solar.Experiences
 import nephtys.loom.protocol.vanilla.solar.Experiences._
@@ -105,7 +105,7 @@ import scala.util.Try
     """.stripMargin)
 
 )
-class VanillaExperienceComponent extends OnChangesJS{
+class VanillaExperienceComponent extends OnChanges{
   //add manual gains and manual spendings via buttons
   //show manual entries as collapsed list / log (LIFO)
 

@@ -1,7 +1,7 @@
 package nephtys.loom.frontend
 
 import angulate2.core.OnChanges.SimpleChanges
-import angulate2.core.{EventEmitter, OnChangesJS}
+import angulate2.core.{EventEmitter}
 import angulate2.std._
 
 import scala.scalajs.js
@@ -68,7 +68,7 @@ import scala.scalajs.js.Array
     """.stripMargin)
 
 )
-class AbilityComponent extends OnChangesJS{
+class AbilityComponent extends OnChanges{
   //changes to the outside: changes to abilities and changes to case
 
   @Output

@@ -2,9 +2,8 @@ package nephtys.loom.frontend
 
 import java.util.UUID
 
-import angulate2.core.OnInitJS
 import angulate2.router.Router
-import angulate2.std.Component
+import angulate2.std.{Component, OnInit}
 import nephtys.dualframe.cqrs.client.TokenService
 import nephtys.loom.protocol.vanilla.solar.Solar
 import nephtys.loom.protocol.vanilla.solar.SolarProtocol.{Create, SetName, SolarCommand}
@@ -15,6 +14,7 @@ import scala.scalajs.js
 import scala.util.Random
 import rxscalajs.Observable
 import rxscalajs.subjects.BehaviorSubject
+
 import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
@@ -37,7 +37,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 )
 class NewVanillaComponent(router: Router,
                           tokenService: TokenService,
-                          vanillaControlService: VanillaControlService) extends OnInitJS {
+                          vanillaControlService: VanillaControlService) extends OnInit {
 
   var writtenName : String = ""
 

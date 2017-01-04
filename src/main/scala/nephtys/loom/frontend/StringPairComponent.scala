@@ -1,7 +1,7 @@
 package nephtys.loom.frontend
 
 import angulate2.core.OnChanges.SimpleChanges
-import angulate2.core.{EventEmitter, OnChangesJS}
+import angulate2.core.{EventEmitter}
 import nephtys.loom.protocol.vanilla.solar.Abilities.SpecialtyAble
 import angulate2.std._
 
@@ -36,7 +36,7 @@ import scala.scalajs.js
       |</ul>
     """.stripMargin
 )
-class StringPairComponent extends OnChangesJS {
+class StringPairComponent extends OnChanges {
 
   //useable for specialties and for intimacies (as they are just a combobox AND a text field)
 

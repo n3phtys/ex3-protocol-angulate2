@@ -2,7 +2,7 @@ package nephtys.loom.frontend
 
 import java.util.UUID
 
-import angulate2.core.OnInitJS
+
 import angulate2.router.Router
 import angulate2.std.Component
 import nephtys.loom.frontend.IncrementalChanges.{Deletion, Insertion}

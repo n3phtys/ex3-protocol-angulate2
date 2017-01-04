@@ -26,7 +26,7 @@ lazy val root = Project("ex3-protocol-angulate", file("."))
   .settings(
     libraryDependencies ++= Seq(
       "com.github.lukajcb" %%% "rxscala-js" % "0.9.2",
-      "com.lihaoyi" %%% "upickle" % "0.4.3"
+      "com.lihaoyi" %%% "upickle" % "0.4.4"
     ),
     ngBootstrap := Some("nephtys.loom.frontend.AppModule"),
     scalacOptions ++= Seq("-deprecation", "-encoding", "UTF-8", "-feature", "-target:jvm-1.8", "-unchecked",

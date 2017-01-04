@@ -1,7 +1,6 @@
 package nephtys.loom.frontend
 
 import angulate2.core.OnChanges.SimpleChanges
-import angulate2.core.OnChangesJS
 import angulate2.std._
 import nephtys.loom.protocol.vanilla.solar.{Abilities, Intimacies, Solar}
 
@@ -29,7 +28,7 @@ import scala.collection.immutable.SortedSet
     """.stripMargin)
 
 )
-class PointsLeftComponent extends OnChangesJS{
+class PointsLeftComponent extends OnChanges{
 
 
   @Input

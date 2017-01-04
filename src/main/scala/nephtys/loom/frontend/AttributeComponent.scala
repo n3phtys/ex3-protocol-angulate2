@@ -2,7 +2,7 @@ package nephtys.loom.frontend
 
 
 import angulate2.core.OnChanges.SimpleChanges
-import angulate2.core.{EventEmitter, OnChangesJS}
+import angulate2.core.{EventEmitter}
 import angulate2.std._
 import nephtys.loom.protocol.vanilla.solar.Attributes
 import nephtys.loom.protocol.vanilla.solar.Attributes.{AttributeBlock, AttributeRating}
@@ -78,7 +78,7 @@ import scala.scalajs.js
                    """.stripMargin)
 
 )
-class AttributeComponent extends OnChangesJS {
+class AttributeComponent extends OnChanges {
 
   @Input
   var attributes : AttributeBlock = Attributes.emptyAttributeBlock

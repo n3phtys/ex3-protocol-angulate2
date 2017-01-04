@@ -3,7 +3,6 @@ package nephtys.loom.frontend
 import java.util.{Date, UUID}
 import java.util.concurrent.TimeUnit
 
-import angulate2.core.OnInitJS
 import angulate2.router.{ActivatedRoute, Router}
 import angulate2.std.{Component, OnInit}
 import nephtys.dualframe.cqrs.client.{DottedStringPair, DottedStringPairChange}
@@ -79,7 +78,7 @@ import scala.util.Try
       |<points-left-vanilla  *ngIf="character"  [character]="character"></points-left-vanilla>
     """.stripMargin
 )
-class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: VanillaInMemoryService, vanillaControlService: VanillaControlService, router : Router) extends OnInitJS{
+class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: VanillaInMemoryService, vanillaControlService: VanillaControlService, router : Router) extends OnInit{
 
   var character : Solar = _
 
