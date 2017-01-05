@@ -33,6 +33,8 @@ import scala.util.Try
   template =
     """<h2 *ngIf="character">Customizing {{character.name}}</h2>
       |
+      |<charm-component-vanilla></charm-component-vanilla>
+      |
       |<meta-control-component  *ngIf="character"  [input]="character"
       | (ownerChanged)="ownederChanged($event)" (deleteEvent)="aggregateDeleted($event)"
       | (readersChanged)="readersChanged($event)" (publicStateChanged)="publicStateChanged($event)"
