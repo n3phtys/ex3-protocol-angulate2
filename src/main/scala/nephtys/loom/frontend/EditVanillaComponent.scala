@@ -178,9 +178,9 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
     val f = vanillaControlService.enqueueCommands(c)
   }
 
-  def experienceBlockChanged(value : ExperienceBox) : Unit = {
+  def experienceBlockChanged(value : VanillaExperienceManualEntry) : Unit = {
     println(s"Experience changed to $value")
-    val f = vanillaControlService.enqueueCommands(diff(character.id,character.experience, value))
+    val f = vanillaControlService.enqueueCommands(Seq(AddManualExperienceChange(character.id,value.amountAdded, value.typ, value.note)))
   }
   def charGenStateChange(finished : Boolean) : Unit = {
     println(s"CharGen finished = $finished")

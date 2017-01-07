@@ -133,13 +133,19 @@ class VanillaExperienceComponent extends OnChanges{
       val t: ExperienceType = selectedType
       val c: String = writtenNote
 
-      experience = experience.addManualEntry(nr, t, c, System.currentTimeMillis())
-      inputChanged()
+    println(s"AddButtonPressed, nr = $nr and t = $t and c = %c")
 
-      manualChangeEvent(experience)
+      val tr : Try[ExperienceBox] = experience.addManualEntry(nr, t, c, System.currentTimeMillis())
+    println(s"tr = $tr")
 
+    tr.foreach( b => {
+          experience = b
+          inputChanged()
+        manualChangeEvent(VanillaExperienceManualEntry(nr, t, c))
+      })
 
-    println("Add Button pressed with values")
+        println("Add Button pressed with values")
+
   }
 
   def endCGclicked() : Unit = {
@@ -172,16 +178,16 @@ class VanillaExperienceComponent extends OnChanges{
   inputChanged()
 
   @Output
-  val experienceChange = new EventEmitter[ExperienceBox]()
+  val experienceChange = new EventEmitter[VanillaExperienceManualEntry]()
 
   @Output
   val charGenFinished = new EventEmitter[Boolean]()
 
-  def manualChangeEvent(eb : ExperienceBox) : Unit = {
+  private def manualChangeEvent(eb : VanillaExperienceManualEntry) : Unit = {
     experienceChange.emit(eb)
   }
 
-  def charGenFinishEvent(finished : Boolean) : Unit = {
+  private def charGenFinishEvent(finished : Boolean) : Unit = {
     charGenFinished.emit(finished)
   }
 
