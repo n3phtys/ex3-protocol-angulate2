@@ -18,8 +18,16 @@ import scala.scalajs.js
   */
 @Component(
   selector = "solar-attributes",
-  template = "<h3>Attributes</h3>" +
-             """
+  template = """
+                |
+                |
+                | <div>
+                |
+                |
+                | <div *ngIf="useTitle">
+                | <h3 >Attributes</h3>
+                |</div>
+                |
                | <div class="container">
                | <div class="container-column">
                | <div class="column-header">Physical</div>
@@ -43,6 +51,7 @@ import scala.scalajs.js
                | <dot-control color="cyan" [value]="attributeMap[wit]" (valueSelected)="scoreChange(wit, $event)" [min]="minvalue" name="Wits" class="container-cell"></dot-control>
                |
                |
+               | </div>
                | </div>
                | </div>
              """.stripMargin,
@@ -82,6 +91,9 @@ class AttributeComponent extends OnChanges {
 
   @Input
   var attributes : AttributeBlock = Attributes.emptyAttributeBlock
+
+  @Input
+  var useTitle : Boolean = true
 
   var attributeMap : js.Array[Int] = js.Array()
 

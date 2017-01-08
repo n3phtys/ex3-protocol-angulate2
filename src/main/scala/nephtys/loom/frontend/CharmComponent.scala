@@ -12,7 +12,7 @@ import nephtys.loom.protocol.shared.CharmRef
   selector = "charm-component-vanilla",
   template =
     """ <div>
-      | This is the Charm Component
+      | [WIP!] Here will be the Charm Component [WIP!]
       |</div>
     """.stripMargin,
   styles = @@@(

@@ -21,7 +21,7 @@ import scala.scalajs.js.Array
   selector = "abilities-caste-vanilla",
   template =
     """ <div>
-      |<h3>Caste</h3>
+      |<!--h5>Caste</h5-->
       |<div class="form-group">
       | <label for="sel1">Select Solar Caste</label>
       |    <select class="form-control"  id="sel1" name="caste" [ngModel]="selectedCasteStr" (ngModelChange)="casteChanged($event)">
@@ -32,7 +32,8 @@ import scala.scalajs.js.Array
       |    </div>
       |<div *ngIf="selectedCasteStr" >caste abilities for {{selectedCasteStr}}: <label *ngFor="let s of casteAbilities" > - {{s}} - </label>
       |</div>
-      |<h3>Abilities</h3>
+      |<hr>
+      |<h5>Abilities</h5>
       |<ul>
       |<li *ngFor="let pack of typeableHierarchy; let i = index" >
       |<div>
@@ -64,7 +65,9 @@ import scala.scalajs.js.Array
     """.stripMargin,
   styles = @@@(
     """
-      |
+      |h5.panel-title {
+      |    font-size: 14px
+      |}
     """.stripMargin)
 
 )
@@ -83,6 +86,7 @@ class AbilityComponent extends OnChanges{
 
   @Input
   var caste : Option[Caste] = None
+
 
 
   var typeAble : Array[Array[Boolean]] = Array() // calculate for every typeGroup the 4 possible legal options

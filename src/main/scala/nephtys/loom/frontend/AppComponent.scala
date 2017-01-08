@@ -27,8 +27,8 @@ import angulate2.std.Component
  |          <ul class="dropdown-menu">
  |          <li><a routerLink="/dashboard/vanilla" routerLinkActive="active">All my Characters</a></li>
  |          <li><a routerLink="/new/vanilla" routerLinkActive="active">Create New Solar</a></li>
- |            <li><a href="#">Page 1-1</a></li>
- |            <li><a href="#">Page 1-2</a></li>
+ |            <!--li><a href="#">Page 1-1</a></li>
+ |            <li><a href="#">Page 1-2</a></li-->
  |          </ul>
  |        </li>
  |        <!--li><a href="#">Page 2</a></li>

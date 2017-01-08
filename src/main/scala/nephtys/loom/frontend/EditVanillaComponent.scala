@@ -32,54 +32,84 @@ import scala.util.Try
 @Component(
   selector = "detail-edit-vanilla",
   template =
-    """<h2 *ngIf="character">Customizing {{character.name}}</h2>
+    """<h3 *ngIf="character">Customizing {{character.name}}{{charactercastestr}}</h3>
       |
-      |<charm-component-vanilla></charm-component-vanilla>
+      |<hr>
+      |<points-left-vanilla  *ngIf="character"  [character]="character"></points-left-vanilla>
+      |<hr>
       |
-      |<meta-control-component  *ngIf="character"  [input]="character"
-      | (ownerChanged)="ownederChanged($event)" (deleteEvent)="aggregateDeleted($event)"
-      | (readersChanged)="readersChanged($event)" (publicStateChanged)="publicStateChanged($event)"
-      |></meta-control-component>
-      |
-      |<collapsed-well title="Metadata">
+      |<collapsed-well title="Name & Co.">
       |<string-map [input]="metamap" (mapChange)="metaMapChanged($event)"></string-map>
       |</collapsed-well>
       |
-      |<solar-attributes  *ngIf="character"  [attributes]="character.attributes" (change)="attributeBlockChanged($event)" ></solar-attributes>
       |
+      |<collapsed-well title="Attributes">
+      |<solar-attributes  *ngIf="character" [useTitle]="false" [attributes]="character.attributes" (change)="attributeBlockChanged($event)" ></solar-attributes>
+      |</collapsed-well>
+      |
+      |
+      |<collapsed-well title="Abilities">
+      |<div>
       |<abilities-caste-vanilla  *ngIf="character"  (casteChange)="casteChanged($event)" (abilitiesChange)="abilityChanged($event)"   [input]="character.abilities" [caste]="character.caste" ></abilities-caste-vanilla>
-      |
+      |<hr>
       |<string-pair-list title="Specialties"
       |[input]="specialties" [selectable]="possibleAbilities" (seqChange)="specialtiesChanged($event)"
       |></string-pair-list>
+      |</div>
+      |</collapsed-well>
       |
-      |<dotted-string-list title="Merits"
+      |
+      |<charm-component-vanilla></charm-component-vanilla>
+      |
+      |<collapsed-well title="Merits">
+      |<dotted-string-list title=""
       |[selectableValues]="meritcategories"
       |[input]="meritsAsPairs"
       |(seqChange)="meritPairsChanged($event)"
       |></dotted-string-list>
+      |</collapsed-well>
       |
-      |<h3>Permanent Willpower</h3>
-      |<dot-control name="Willpower"  *ngIf="character"  color="green" [max]="10" [min]="5" [value]="character.willpowerDots" (valueSelected)="willpowerChanged($event)"></dot-control>
       |
-      |<string-pair-list title="Intimacies"
+      |<collapsed-well title="Willpower">
+      |<dot-control name="Permanent Willpower"  *ngIf="character"  color="green" [max]="10" [min]="5" [value]="character.willpowerDots" (valueSelected)="willpowerChanged($event)"></dot-control>
+      |</collapsed-well>
+      |
+      |<collapsed-well title="Intimacies">
+      |<string-pair-list title=""
       |[input]="intimacies" [selectable]="possibleIntimacyIntensities" (seqChange)="intimaciesChanged($event)"
       |></string-pair-list>
+      |</collapsed-well>
       |
-      |<string-list title="Notes" [input]="notes" (seqChange)="notesChanged($event)" ></string-list>
       |
+      |<collapsed-well title="Notes">
+      |<string-list title="" [input]="notes" (seqChange)="notesChanged($event)" ></string-list>
+      |
+      |</collapsed-well>
+      |
+      |<collapsed-well title="Experience">
       |<experience-component  *ngIf="character"
       | [input]="character.experience"  [charGenFinishedState]="! character.stillInCharGen"
       | (charGenFinished)="charGenStateChange($event)" (experienceChange)="experienceBlockChanged($event)"
       |></experience-component>
-      |<div class="container">
+      |</collapsed-well>
+      |
+      |
+      |
+      |<collapsed-well title="Access Settings">
+      |<meta-control-component [useTitle]="false" *ngIf="character"  [input]="character"
+      | (ownerChanged)="ownederChanged($event)" (deleteEvent)="aggregateDeleted($event)"
+      | (readersChanged)="readersChanged($event)" (publicStateChanged)="publicStateChanged($event)"
+      |></meta-control-component>
+      |</collapsed-well>
+      |
+      |
+      |<div >
       |  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Full Solar:</button>
       |  <div id="demo" class="collapse">
       | {{character}}
       |  </div>
       |</div>
-      |<!--div> full: {{character}} </div-->
-      |<points-left-vanilla  *ngIf="character"  [character]="character"></points-left-vanilla>
+      |
     """.stripMargin
 )
 class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: VanillaInMemoryService, vanillaControlService: VanillaControlService, router : Router) extends OnInit{
@@ -88,6 +118,8 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
 
   private var selected : BehaviorSubject[Option[ID[Solar]]] = BehaviorSubject(None)
 
+
+  var charactercastestr : String = ""
 
   private def reselectCharacter(id : ID[Solar]) : Unit = {
     println(new Date().toString + ": Character changed and reloaded inside Edit Component")
@@ -253,7 +285,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
     possibleAbilities = solar.abilities.specialtyAbles
     intimacies = solar.intimacies.map(a => StringPair(selected = a._2.toString, written = a._1)).toSeq
     meritsAsPairs = solar.merits.map(m => DottedStringPair(category = m.category.map(_.string).getOrElse(""), title = m.name, rating = m.rating.number.toInt)).toIndexedSeq
-
+    charactercastestr = solar.caste.map(c => " ( " + c.toString + " )").getOrElse("")
   }
 
 

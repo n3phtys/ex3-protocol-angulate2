@@ -22,9 +22,7 @@ import scala.collection.immutable.SortedSet
     """.stripMargin,
   styles = @@@(
     """
-      |.form-inline > * {
-      |   margin:15px 15px;
-      |}
+      |
     """.stripMargin)
 
 )
