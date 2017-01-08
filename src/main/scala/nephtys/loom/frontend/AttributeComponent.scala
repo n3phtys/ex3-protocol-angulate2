@@ -85,6 +85,8 @@ class AttributeComponent extends OnChanges {
 
   var attributeMap : js.Array[Int] = js.Array()
 
+  //var outputableMap : js.Array[Int] = js.Array()
+
   @Output
   val change = new EventEmitter[AttributeBlock]()
 
@@ -93,7 +95,7 @@ class AttributeComponent extends OnChanges {
 
   def scoreChange(attribute : Int, newValue : Int) : Unit = {
     println(s"Changing in Attribute index $attribute to value $newValue")
-    attributeMap(attribute) = newValue
+    //attributeMap(attribute) = newValue
     val t = attributes.block.zipWithIndex.map(a => if (a._2 == attribute) {
       AttributeRating(a._1.attribute, Dots(newValue.toByte))
     } else {
@@ -109,12 +111,16 @@ class AttributeComponent extends OnChanges {
   val man = 4
   val app = 5
   val per = 6
-  val wit = 7
-  val int = 8
+  val int = 7
+  val wit = 8
 
   def inputChanged() : Unit = {
     attributeMap.clear()
-    attributes.block.foreach(c => attributeMap.push(c.dots.number.toInt))
+    //outputableMap.clear()
+    attributes.block.foreach(c => {
+      attributeMap.push(c.dots.number)
+      //outputableMap.push(c.dots.number)
+    })
   }
 
   inputChanged()

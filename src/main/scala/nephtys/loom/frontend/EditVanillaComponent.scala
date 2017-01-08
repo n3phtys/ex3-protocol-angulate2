@@ -13,12 +13,13 @@ import nephtys.loom.protocol.vanilla.solar.Attributes.AttributeBlock
 import nephtys.loom.protocol.vanilla.solar.Experiences.ExperienceBox
 import nephtys.loom.protocol.vanilla.solar.Misc.Caste
 import nephtys.loom.protocol.vanilla.solar.SolarProtocol._
-import nephtys.loom.protocol.vanilla.solar.{Abilities, Intimacies, Merits, Solar}
+import nephtys.loom.protocol.vanilla.solar._
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 import rxscalajs.subjects.BehaviorSubject
 
 import scala.collection.mutable
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.concurrent.duration.{FiniteDuration, TimeUnit}
 import scala.scalajs.js
 import scala.scalajs.js.JSConverters._
@@ -207,7 +208,12 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
 
   def attributeBlockChanged(newblock : AttributeBlock): Unit = {
       println(s"new AttribtueBlock $newblock")
-    val f = vanillaControlService.enqueueCommands(diff(character.id,character.attributes, newblock))
+    vanillaControlService.enqueueCommands(diff(character.id,character.attributes, newblock)).onComplete(t => {
+      //println(s"onComplete returns $t")
+      //if(t.isFailure ||t.get.exists(_.isFailure)) {
+      //  resetCharacter(character)
+      //}
+    })
   }
 
   var notes : Seq[String] = Seq.empty
@@ -246,6 +252,18 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
     possibleAbilities = solar.abilities.specialtyAbles
     intimacies = solar.intimacies.map(a => StringPair(selected = a._2.toString, written = a._1)).toSeq
     meritsAsPairs = solar.merits.map(m => DottedStringPair(category = m.category.map(_.string).getOrElse(""), title = m.name, rating = m.rating.number.toInt)).toIndexedSeq
+
+  }
+
+
+  private val defaultSolarEmpty : Solar = Characters.emptySolar(ID[Solar](UUID.randomUUID()), Email("something@dot.com"))
+
+  private def resetCharacter(solar : Solar) : Unit = {
+    setCharacter(defaultSolarEmpty)
+    import scala.concurrent.ExecutionContext.Implicits.global
+    val f = Future{
+      setCharacter(solar)
+    }
 
   }
 
