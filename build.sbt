@@ -1,3 +1,7 @@
+import java.nio.file.{FileAlreadyExistsException, Files, Path, Paths}
+import java.util.function.Consumer
+
+import scala.util.{Failure, Try}
 
 enablePlugins(ScalaJSPlugin)
 enablePlugins(Angulate2Plugin)
@@ -7,6 +11,8 @@ name := "ex3-protocol-angulate"
 version := "0.0.1"
 
 scalaVersion := "2.11.8"
+
+def shortVersion : String = "2.11" //calculate this somehow
 
 
 val actualProtocolurl =  "https://github.com/n3phtys/protocol-vanilla-solar.git"
@@ -35,3 +41,63 @@ lazy val root = Project("ex3-protocol-angulate", file("."))
       jsDependencies += "org.webjars" % "jquery" % "2.1.3" / "2.1.3/jquery.js"
 
   )
+
+
+val createDirectories : Seq[String] = Seq("web", "web/target", s"web/target/scala-$shortVersion")
+
+val copyDirectories : Map[String, String] = Map("node_modules" -> "web/node_modules")
+
+val copyFiles : Map[String, String] = Map("index.html" -> "web/index.html", "package.json" -> "web/package.json", "systemjs.config.js" -> "web/systemjs.config.js",
+  "target/scala-2.11/ex3-protocol-angulate-fastopt.js" -> "web/target/scala-2.11/ex3-protocol-angulate-fastopt.js",
+  "target/scala-2.11/ex3-protocol-angulate-jsdeps.js" -> "web/target/scala-2.11/ex3-protocol-angulate-jsdeps.js",
+  "target/scala-2.11/ex3-protocol-angulate-sjsx.js" -> "web/target/scala-2.11/ex3-protocol-angulate-sjsx.js"
+)
+
+lazy val collect = TaskKey[Unit]("collect", "Copy javascript related files to web directory")
+//TODO: three steps: first create directories, afterwards copy directories, afterwards copyFiles
+collect := {
+  //create all directories
+  createDirectories.foreach(s => Try(Files.createDirectory(Paths.get(s))))
+
+  //copy directories
+  copyDirectories.foreach( a => {
+      def source = a._1
+      def target = a._2
+      Try {
+        val stream = Files.walk(Paths.get(source))
+
+    stream.forEach(
+      new Consumer[Path] {
+        def accept(path : Path) : Unit = Try({
+          val targetpath : Path = Paths.get(path.toString.replace(source, target))
+          val parent : File = targetpath.toFile.getParentFile
+          if (parent.exists() || parent.mkdirs()) {
+            Files.copy(path, targetpath)
+          } else {
+            println("could not create file")
+          }
+        }) match {
+          case Failure(e) => if (!e.isInstanceOf[FileAlreadyExistsException]) println(s"Files.copy failed with $e")
+          case _ => //println(s"Copied Path $path")Alread
+        }
+      })
+      } match {
+        case Failure(e) => println(s"Files.walk failed with $e")
+        case _ =>
+      }
+  })
+
+  //copy single files
+  copyFiles.map(a => {
+    def source = Paths.get(a._1)
+    def target = Paths.get(a._2)
+    Try(Files.copy(source, target)) match {
+      case Failure(e) => if (!e.isInstanceOf[FileAlreadyExistsException]) println(s"Files.copy failed with $e")
+      case _ => //println(s"Copied Path $path")Alread
+    }
+  })
+
+}
+
+
+addCommandAlias("complete", ";clean;fastOptJS;collect")
