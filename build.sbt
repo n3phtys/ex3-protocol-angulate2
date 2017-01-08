@@ -1,4 +1,4 @@
-import java.nio.file.{FileAlreadyExistsException, Files, Path, Paths}
+import java.nio.file.{DirectoryNotEmptyException, FileAlreadyExistsException, Files, Path, Paths, StandardCopyOption}
 import java.util.function.Consumer
 
 import scala.util.{Failure, Try}
@@ -77,12 +77,12 @@ collect := {
           val targetpath : Path = Paths.get(path.toString.replace(source, target))
           val parent : File = targetpath.toFile.getParentFile
           if (parent.exists() || parent.mkdirs()) {
-            Files.copy(path, targetpath)
+            Files.copy(path, targetpath, StandardCopyOption.REPLACE_EXISTING)
           } else {
             println("could not create file")
           }
         }) match {
-          case Failure(e) => if (!e.isInstanceOf[FileAlreadyExistsException]) println(s"Files.copy failed with $e")
+          case Failure(e) => if (!e.isInstanceOf[FileAlreadyExistsException] && !e.isInstanceOf[DirectoryNotEmptyException]) println(s"Files.copy failed with $e")
           case _ => //println(s"Copied Path $path")Alread
         }
       })
@@ -96,8 +96,8 @@ collect := {
   copyFiles.map(a => {
     def source = Paths.get(a._1)
     def target = Paths.get(a._2)
-    Try(Files.copy(source, target)) match {
-      case Failure(e) => if (!e.isInstanceOf[FileAlreadyExistsException]) println(s"Files.copy failed with $e")
+    Try(Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING)) match {
+      case Failure(e) => if (!e.isInstanceOf[FileAlreadyExistsException] && !e.isInstanceOf[DirectoryNotEmptyException]) println(s"Files.copy failed with $e")
       case _ => //println(s"Copied Path $path")Alread
     }
   })
