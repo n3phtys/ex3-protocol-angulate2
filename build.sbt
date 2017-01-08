@@ -8,11 +8,14 @@ enablePlugins(Angulate2Plugin)
 
 name := "ex3-protocol-angulate"
 
-version := "0.0.1"
+val scalaV = "2.11.8"
 
-scalaVersion := "2.11.8"
+version := "0.0.2"
 
-def shortVersion : String = "2.11" //calculate this somehow
+scalaVersion := scalaV
+
+
+def shortVersion : String = scalaV.substring(0, 4)
 
 
 val actualProtocolurl =  "https://github.com/n3phtys/protocol-vanilla-solar.git"
@@ -48,9 +51,9 @@ val createDirectories : Seq[String] = Seq("web", "web/target", s"web/target/scal
 val copyDirectories : Map[String, String] = Map("node_modules" -> "web/node_modules")
 
 val copyFiles : Map[String, String] = Map("index.html" -> "web/index.html", "package.json" -> "web/package.json", "systemjs.config.js" -> "web/systemjs.config.js",
-  "target/scala-2.11/ex3-protocol-angulate-fastopt.js" -> "web/target/scala-2.11/ex3-protocol-angulate-fastopt.js",
-  "target/scala-2.11/ex3-protocol-angulate-jsdeps.js" -> "web/target/scala-2.11/ex3-protocol-angulate-jsdeps.js",
-  "target/scala-2.11/ex3-protocol-angulate-sjsx.js" -> "web/target/scala-2.11/ex3-protocol-angulate-sjsx.js"
+  s"target/scala-$shortVersion/ex3-protocol-angulate-fastopt.js" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-fastopt.js",
+  s"target/scala-$shortVersion/ex3-protocol-angulate-jsdeps.js" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-jsdeps.js",
+  s"target/scala-$shortVersion/ex3-protocol-angulate-sjsx.js" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-sjsx.js"
 )
 
 lazy val collect = TaskKey[Unit]("collect", "Copy javascript related files to web directory")
