@@ -41,8 +41,9 @@ import scala.util.Try
       | (readersChanged)="readersChanged($event)" (publicStateChanged)="publicStateChanged($event)"
       |></meta-control-component>
       |
-      |<h3>Metadata</h3>
+      |<collapsed-well title="Metadata">
       |<string-map [input]="metamap" (mapChange)="metaMapChanged($event)"></string-map>
+      |</collapsed-well>
       |
       |<solar-attributes  *ngIf="character"  [attributes]="character.attributes" (change)="attributeBlockChanged($event)" ></solar-attributes>
       |

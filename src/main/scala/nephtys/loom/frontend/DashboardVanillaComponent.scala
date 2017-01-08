@@ -16,7 +16,7 @@ import scala.util.Try
   */
 @Component(
   selector = "vanilla-solar-dashboard",
-  template = "<h2>this is the dashboard</h2>" +
+  template = "<h2>All your Exalted 3rd Edition Solar Characters:</h2>" +
     "<main-table-vanilla></main-table-vanilla>"
 )
 class DashboardVanillaComponent( route: ActivatedRoute) {

@@ -6,7 +6,7 @@ import angulate2.http.HttpModule
 import angulate2.platformBrowser.BrowserModule
 import angulate2.router.{Route, RouterModule}
 import angulate2.std._
-import nephtys.dualframe.cqrs.client.{ClientFrameModule, LoginComponent}
+import nephtys.dualframe.cqrs.client.{ClientFrameModule, LoginComponent, LoginModule}
 
 import scala.scalajs.js
 import scala.scalajs.js.Object
@@ -15,7 +15,7 @@ import scala.scalajs.js.Object
   * Created by nephtys on 12/8/16.
   */
 @NgModule(
-  imports = @@[ClientFrameModule, BrowserModule, FormsModule] :+
+  imports = @@[ClientFrameModule, BrowserModule, FormsModule, LoginModule] :+
     RouterModule.forRoot(Routes.routes, js.Dynamic.literal(useHash = true)),
   providers = @@[VanillaMockAggregateService, VanillaControlService, VanillaInMemoryService, VanillaCommandQueueService],
   declarations = @@[AppComponent, CharmComponent, AbilityComponent, PointsLeftComponent, AttributeComponent, VanillaExperienceComponent, StringPairComponent, NewVanillaComponent,DashboardVanillaComponent, MainTableVanillaComponent, EditVanillaComponent],
