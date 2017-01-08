@@ -19,11 +19,11 @@ import scala.scalajs.js
 @Component(
   selector = "main-table-vanilla",
   template =
-    """<h2>Here will be the vanilla main data table</h2>
+    """<h4>Here will be the vanilla main data table</h4>
       |<ul>
       |<li *ngFor="let instance of vanillaInMemoryService.allCharacters; let i = index">
       | <button type="button" (click)="idButtonClicked(instance.id)" class="btn btn-primary"
-      |      >{{i}}. {{instance.id}}</button>
+      |      >{{i}}. {{instance.name}} - {{instance.id}}</button>
       |</li>
       |</ul>
     """.stripMargin

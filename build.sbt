@@ -35,7 +35,8 @@ lazy val root = Project("ex3-protocol-angulate", file("."))
   .settings(
     libraryDependencies ++= Seq(
       "com.github.lukajcb" %%% "rxscala-js" % "0.9.2",
-      "com.lihaoyi" %%% "upickle" % "0.4.4"
+      "com.lihaoyi" %%% "upickle" % "0.4.4",
+      "de.nephtys" %%% "scalajs-google-sign-in" % "0.0.1"
     ),
     ngBootstrap := Some("nephtys.loom.frontend.AppModule"),
     scalacOptions ++= Seq("-deprecation", "-encoding", "UTF-8", "-feature", "-target:jvm-1.8", "-unchecked",
@@ -53,7 +54,8 @@ val copyDirectories : Map[String, String] = Map("node_modules" -> "web/node_modu
 val copyFiles : Map[String, String] = Map("index.html" -> "web/index.html", "package.json" -> "web/package.json", "systemjs.config.js" -> "web/systemjs.config.js",
   s"target/scala-$shortVersion/ex3-protocol-angulate-fastopt.js" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-fastopt.js",
   s"target/scala-$shortVersion/ex3-protocol-angulate-jsdeps.js" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-jsdeps.js",
-  s"target/scala-$shortVersion/ex3-protocol-angulate-sjsx.js" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-sjsx.js"
+  s"target/scala-$shortVersion/ex3-protocol-angulate-sjsx.js" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-sjsx.js",
+  s"target/scala-$shortVersion/ex3-protocol-angulate-fastopt.js.map" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-fastopt.js.map"
 )
 
 lazy val collect = TaskKey[Unit]("collect", "Copy javascript related files to web directory")

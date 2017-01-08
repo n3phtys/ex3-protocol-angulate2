@@ -23,7 +23,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Component(
   selector = "create-new-vanilla",
   template =
-    """<h2>Create a new Solar Character</h2>
+    """<h3>Create a new Solar Character</h3>
       |<form class="form-inline">
       |  <div class="form-group">
       |    <label for="email">Randomized Character Name:</label>

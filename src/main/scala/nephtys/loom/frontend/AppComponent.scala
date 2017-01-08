@@ -21,7 +21,7 @@ import angulate2.std.Component
  |    </div>
  |    <div class="collapse navbar-collapse" id="myNavbar">
  |      <ul class="nav navbar-nav">
- |        <li><a href="#">Home</a></li>
+ |        <!--li><a href="#">Home</a></li-->
  |        <li class="dropdown">
  |          <a class="dropdown-toggle" data-toggle="dropdown" href="#">Exalted Third Edition <span class="caret"></span></a>
  |          <ul class="dropdown-menu">
@@ -34,9 +34,10 @@ import angulate2.std.Component
  |        <!--li><a href="#">Page 2</a></li>
  |        <li><a href="#">Page 3</a></li-->
  |      </ul>
- |      <div class="nav navbar-nav navbar-right">
- |        <login-area></login-area>
- |      </div>
+ |      <ul class="nav navbar-nav navbar-right">
+ |        <li><login-info></login-info></li>
+ |        <li><google-plus-login></google-plus-login></li>
+ |      </ul>
  |    </div>
  |  </div>
  |</nav>
