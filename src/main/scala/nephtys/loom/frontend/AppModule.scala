@@ -17,7 +17,7 @@ import scala.scalajs.js.Object
 @NgModule(
   imports = @@[ClientFrameModule, BrowserModule, FormsModule, LoginModule] :+
     RouterModule.forRoot(Routes.routes, js.Dynamic.literal(useHash = true)),
-  providers = @@[VanillaMockAggregateService, VanillaControlService, VanillaInMemoryService, VanillaCommandQueueService],
+  providers = @@[VanillaMockAggregateService, CharmService, VanillaControlService, VanillaInMemoryService, VanillaCommandQueueService],
   declarations = @@[AppComponent, CharmComponent, AbilityComponent, PointsLeftComponent, AttributeComponent, VanillaExperienceComponent, StringPairComponent, NewVanillaComponent,DashboardVanillaComponent, MainTableVanillaComponent, EditVanillaComponent],
   bootstrap = @@[AppComponent]
 )

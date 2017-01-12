@@ -34,9 +34,16 @@ import scala.util.Try
   template =
     """<h3 *ngIf="character">Customizing {{character.name}}{{charactercastestr}}</h3>
       |
+      |
+      |<charm-component-vanilla></charm-component-vanilla>
+      |
+      |
       |<hr>
       |<points-left-vanilla  *ngIf="character"  [character]="character"></points-left-vanilla>
       |<hr>
+      |
+      |
+      |
       |
       |<collapsed-well title="Name & Co.">
       |<string-map [input]="metamap" (mapChange)="metaMapChanged($event)"></string-map>
@@ -59,7 +66,6 @@ import scala.util.Try
       |</collapsed-well>
       |
       |
-      |<charm-component-vanilla></charm-component-vanilla>
       |
       |<collapsed-well title="Merits">
       |<dotted-string-list title=""
