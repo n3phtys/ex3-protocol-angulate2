@@ -259,7 +259,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class CharmComponent(val charmService: CharmService) extends OnChanges {
 
   val selectablePowerTypes : js.Array[String] = js.Array("Solar Charm", "Spell", "Other")
-  val possibleCostTypes : js.Array[String] = js.Array("Experience", "Bonus Points", "Free CG Charms")
+  val possibleCostTypes : js.Array[String] = js.Array("Experience", "Bonus Points", "Free Point Buy Charms")
   var selectableAbilities : js.Array[String] = js.Array("Archery")
 
 
