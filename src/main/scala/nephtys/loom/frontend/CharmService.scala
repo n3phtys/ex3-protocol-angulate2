@@ -1,12 +1,18 @@
 package nephtys.loom.frontend
 
 import angulate2.std.Injectable
-import nephtys.loom.protocol.shared.CharmRef
-import nephtys.loom.protocol.shared.Charms.{Charm, Power, Spell}
+import nephtys.loom.protocol.shared.{CharmRef, Powers}
+import nephtys.loom.protocol.shared.Powers.SolarCharms.SolarCharm
+import nephtys.loom.protocol.shared.Powers.Spells.Spell
+import nephtys.loom.protocol.shared.Powers.{Charm, Power}
 import nephtys.loom.protocol.vanilla.solar.{CharmLearnable, Solar}
 
 import scala.concurrent.Future
 import scala.scalajs.js
+import scala.scalajs.js
+import scala.scalajs.js.Array
+import scala.scalajs.js.JSConverters._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by Christopher on 12.01.2017.
@@ -16,20 +22,40 @@ class CharmService {
 
   println("CharmService initialized")
 
-  def recalculateForCharacter(character : CharmLearnable) : Future[Unit] = ???
+  def recalculateForCharacter(character : CharmLearnable) : Future[Unit] = {
 
-  def translate(charmRef : CharmRef) : Option[Power] = ???
+    purchaseableSolarCharms = Powers.SolarCharms.solarCharms.toJSArray
+    purchaseableSpells = Powers.Spells.spells.toJSArray
+    purchaseableOtherCharms = (Powers.EclipseCharms.eclipseCharms ++ Powers.MartialArtsCharms.martialArtsCharms ++ Powers.Evocations.evocations).toJSArray
 
-  var purchaseableCharms : js.Array[Charm] = js.Array[Charm]()
+    Future {}
+  }
 
-  var purchaseableSpells : js.Array[Spell] = js.Array()
+  //TODO: split into three categories
 
-  var purchasedCharms : js.Array[Charm] = js.Array()
 
-  var purchasedSpells : js.Array[Spell] = js.Array()
 
-  var unpurchaseableCharms : js.Array[Charm] = js.Array()
+  var purchaseableSolarCharms : js.Array[SolarCharm with Product with Serializable] = js.Array()
 
-  var unpurchaseableSpells : js.Array[Spell] = js.Array()
+  var purchaseableSpells : js.Array[Spell with Product with Serializable] = js.Array()
+
+  var purchaseableOtherCharms : js.Array[Charm with Product with Serializable] = js.Array()
+
+
+
+
+  var purchasedSolarCharms : js.Array[SolarCharm with Product with Serializable] = js.Array()
+
+  var purchasedSpells : js.Array[Spell with Product with Serializable] = js.Array()
+
+  var purchasedOtherCharms : js.Array[Charm with Product with Serializable] = js.Array()
+
+
+
+  var unpurchaseableSolarCharms : js.Array[SolarCharm with Product with Serializable] = js.Array()
+
+  var unpurchaseableSpells : js.Array[Spell with Product with Serializable] = js.Array()
+
+  var unpurchaseableOtherCharms : js.Array[Charm with Product with Serializable] = js.Array()
 
 }

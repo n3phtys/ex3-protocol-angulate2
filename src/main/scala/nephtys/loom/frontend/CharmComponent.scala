@@ -6,13 +6,15 @@ import angulate2.core.EventEmitter
 import angulate2.core.OnChanges.SimpleChanges
 import angulate2.std._
 import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
-import nephtys.loom.protocol.shared.CharmRef
+import nephtys.loom.protocol.shared.Powers.Power
+import nephtys.loom.protocol.shared.{CharmRef, Powers}
 import nephtys.loom.protocol.vanilla.solar.{Characters, Solar}
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 
 import scala.scalajs.js
 import scala.scalajs.js.Array
 import scala.scalajs.js.JSConverters._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * Created by Christopher on 05.01.2017.
@@ -33,20 +35,113 @@ import scala.scalajs.js.JSConverters._
       |</div>
       |
       |   <div>
-      |   You have following Charms/Evocations:
-      |<br>
-      |
-      |   You have following Spells:
-      |<br>
-      |
-      |   Purchaseable Charms:
-      |<br>
-      |
-      |   Purchaseable Spells:
-      |<br>
       |
       |
-      |   Charms not purchaseable (not qualified for):
+      |
+      |
+      |
+      | <div *ngIf="selectedPowerType === selectablePowerTypes[0]">
+      |   <div>
+      |   <label>Already purchased Solar Charms:</label>
+      |     <div *ngFor="let c of charmService.purchasedSolarCharms" > {{c}} </div>
+      |   </div>
+      |
+      |   <div>
+      |   <label>Available for purchase:</label>
+      |     <div *ngFor="let c of charmService.purchaseableSolarCharms" >
+      |
+      |<button type="button" class="btn btn-success" (click)="purchaseClicked(c)"><span class="glyphicon glyphicon-ok"></span></button>
+      |
+      |     {{c}} (Essence {{c.essenceInt}}, {{c.abilityString}} {{c.abilityInt}})
+      |
+      |     </div>
+      |
+      |   </div>
+      |
+      |
+      |   <div>
+      |   <label>Unavailable:</label>
+      |     <div *ngFor="let c of charmService.unpurchaseableSolarCharms" > {{c}} </div>
+      |
+      |   </div>
+      |</div>
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      | <div *ngIf="selectedPowerType === selectablePowerTypes[1]">
+      |   <div>
+      |   <label>Already purchased Spells:</label>
+      |<div *ngFor="let c of charmService.purchasedSpells" > {{c}} </div>
+      |
+      |   </div>
+      |
+      |   <div>
+      |   <label>Available for purchase:</label>
+      |<div *ngFor="let c of charmService.purchaseableSpells" >
+      |<button type="button" class="btn btn-success" (click)="purchaseClicked(c)"><span class="glyphicon glyphicon-ok"></span></button>
+      |{{c}} </div>
+      |
+      |   </div>
+      |
+      |
+      |   <div>
+      |   <label>Unavailable:</label>
+      |<div *ngFor="let c of charmService.unpurchaseableSpells" > {{c}} </div>
+      |
+      |   </div>
+      |</div>
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      |
+      | <div *ngIf="selectedPowerType === selectablePowerTypes[2]">
+      |   <div>
+      |   <label>Already purchased Non-Solar Charms:</label>
+      |<div *ngFor="let c of charmService.purchasedOtherCharms" > {{c}} </div>
+      |
+      |   </div>
+      |
+      |   <div>
+      |   <label>Available for purchase:</label>
+      |<div *ngFor="let c of charmService.purchaseableOtherCharms" >
+      |<button type="button" class="btn btn-success" (click)="purchaseClicked(c)"><span class="glyphicon glyphicon-ok"></span></button>
+      |{{c}} </div>
+      |
+      |   </div>
+      |
+      |
+      |   <div>
+      |   <label>Unavailable:</label>
+      |<div *ngFor="let c of charmService.unpurchaseableOtherCharms" > {{c}} </div>
+      |
+      |   </div>
+      |</div>
+      |
+      |
       |
       |
       |
@@ -182,7 +277,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
   var customCostAmount : Int = 1
 
 
-  var keywords : Seq[Input] = Seq.empty
+  var keywords : Seq[String] = Seq.empty
 
 
   //TODO: design concept for OK/Cancel / and to go back
@@ -193,22 +288,27 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
   var solar : Solar = Characters.emptySolar(ID[Solar](UUID.randomUUID()), Email("something@email.org"))
 
   @Output
-  val purchasedListed = new EventEmitter[CharmRef]()
+  val purchasedListed = new EventEmitter[Powers.Power with Product with Serializable]()
 
   @Output
-  val createdCustom = new EventEmitter[(String, String, String)]()
+  val createdCustom = new EventEmitter[CharmCustomPack]()
 
 
 
   def keyWordChange(change : StringListDif) : Unit = change match {
-    case StringListDelete(index) => ???
-    case StringListAdd(value) => ???
-    case StringListEdit(index, value) => ???
+    case StringListDelete(index) => keywords = keywords.take(index) ++ keywords.drop(index + 1)
+    case StringListAdd(value) => keywords = keywords.+:(value)
+    case StringListEdit(index, value) => keywords = keywords.take(index).+:(value).++(keywords.drop(index + 1))
   }
 
 
   def submitCustomPower() : Unit = {
     ???
+  }
+
+  def purchaseClicked(power : Powers.Power with Product with Serializable ) : Unit = {
+    println(s"purchaseClicked with $power")
+    purchasedListed.emit(power)
   }
 
   override def ngOnChanges(changes: SimpleChanges): Unit = {
@@ -218,6 +318,8 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
   private def inputChanged() : Unit = {
     if (solar != null) {
       selectableAbilities = solar.abilities.abilities.map(_.name).toSeq.sorted.toJSArray
+
+      charmService.recalculateForCharacter(solar).foreach(s => println("Recalculated Charms"))
     }
   }
   inputChanged()
