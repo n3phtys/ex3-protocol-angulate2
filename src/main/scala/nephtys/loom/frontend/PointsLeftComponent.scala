@@ -113,8 +113,8 @@ class PointsLeftComponent extends OnChanges{
       }
 
       val charms : Seq[String] = {
-        if ( ??? /*solar.listedCharms.size < 15*/) { //TODO: also count custom charms with freepoint cost
-          Seq(s"Charms: ${ ??? /*solar.listedCharms.size*/}/15")
+        if ( solar.countCharmPurchases < 15) { //TODO: also count custom charms with freepoint cost
+          Seq(s"Charms: ${ solar.countCharmPurchases}/15")
         } else Seq.empty
       }
 
