@@ -35,7 +35,13 @@ class VanillaInMemoryService(idb: IDBPersistenceService, tokenService: TokenServ
   val changes : BehaviorSubject[Option[IncrementalChanges.Change]] = BehaviorSubject[Option[IncrementalChanges.Change]](None)
 
 
-  idb.getAllAsync(commandStore = false).map(seq => seq.map(s => read[Solar](s)).map(s => (s.id, s)).toMap[ID[Solar], Solar]).foreach(newmap => {
+  idb.getAllAsync(commandStore = false).map(seq => seq.map(s => (Try(read[Solar](s)), s)).filter(t => t._1 match {
+    case s : Success[Solar] => true
+    case Failure(f) => {
+      org.scalajs.dom.window.alert(s"Could not read stored Solar Character from JSON format, \nerror: ${f.getMessage}\nJSON: ${t._2}")
+      false
+    }
+  }).map(_._1.get).map(s => (s.id, s)).toMap[ID[Solar], Solar]).foreach(newmap => {
     aggregateMap = newmap
     allCharacters = newmap.values.toJSArray
     newmap.keys.foreach(k => changes.next(Some(Insertion(k.id))))

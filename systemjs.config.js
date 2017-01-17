@@ -10,8 +10,8 @@
         },
         // map tells the System loader where to look for things
         map: {
-            // our app is within the target/scala-2.11 folder
-            app: 'target/scala-2.11',
+            // our app is within the target/scala-2.12 folder
+            app: 'target/scala-2.12',
             // angular bundles
             '@angular/core': 'npm:@angular/core/bundles/core.umd.js',
             '@angular/common': 'npm:@angular/common/bundles/common.umd.js',
@@ -29,7 +29,7 @@
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
             app: {
-                // the main script to be loaded from target/scala-2.11
+                // the main script to be loaded from target/scala-2.12
                 main: './ex3-protocol-angulate-sjsx',
                 map: {
                     // the name of the Scala.js module to be loaded

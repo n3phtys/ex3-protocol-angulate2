@@ -8,9 +8,9 @@ enablePlugins(Angulate2Plugin)
 
 name := "ex3-protocol-angulate"
 
-val scalaV = "2.11.8"
+val scalaV = "2.12.1"
 
-version := "0.0.2"
+version := "0.0.3"
 
 scalaVersion := scalaV
 
