@@ -6,7 +6,7 @@ import angulate2.core.EventEmitter
 import angulate2.core.OnChanges.SimpleChanges
 import angulate2.std._
 import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
-import nephtys.loom.protocol.shared.Powers.Power
+import nephtys.loom.protocol.shared.Power
 import nephtys.loom.protocol.shared.{CharmRef, Powers}
 import nephtys.loom.protocol.vanilla.solar.{Characters, Solar}
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
@@ -288,7 +288,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
   var solar : Solar = Characters.emptySolar(ID[Solar](UUID.randomUUID()), Email("something@email.org"))
 
   @Output
-  val purchasedListed = new EventEmitter[Powers.Power with Product with Serializable]()
+  val purchasedListed = new EventEmitter[Power with Product with Serializable]()
 
   @Output
   val createdCustom = new EventEmitter[CharmCustomPack]()
@@ -306,7 +306,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
     ???
   }
 
-  def purchaseClicked(power : Powers.Power with Product with Serializable ) : Unit = {
+  def purchaseClicked(power : Power with Product with Serializable ) : Unit = {
     println(s"purchaseClicked with $power")
     purchasedListed.emit(power)
   }

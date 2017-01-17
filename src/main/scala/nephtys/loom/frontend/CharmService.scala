@@ -1,10 +1,7 @@
 package nephtys.loom.frontend
 
 import angulate2.std.Injectable
-import nephtys.loom.protocol.shared.{CharmRef, Powers}
-import nephtys.loom.protocol.shared.Powers.SolarCharms.SolarCharm
-import nephtys.loom.protocol.shared.Powers.Spells.Spell
-import nephtys.loom.protocol.shared.Powers.{Charm, Power}
+import nephtys.loom.protocol.shared._
 import nephtys.loom.protocol.vanilla.solar.{CharmLearnable, Solar}
 
 import scala.concurrent.Future
