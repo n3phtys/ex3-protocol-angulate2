@@ -8,6 +8,8 @@ import angulate2.std.{Component, OnInit}
 import nephtys.dualframe.cqrs.client.{DottedStringPair, DottedStringPairChange}
 import nephtys.dualframe.cqrs.client.DottedStringPairChange.DottedStringPairChange
 import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
+import nephtys.loom.protocol.shared.CustomPowers.CustomPower
+import nephtys.loom.protocol.shared.Power
 import nephtys.loom.protocol.vanilla.solar.Abilities.{AbilityLikeSpecialtyAble, AbilityMatrix, Specialty}
 import nephtys.loom.protocol.vanilla.solar.Attributes.AttributeBlock
 import nephtys.loom.protocol.vanilla.solar.Experiences.ExperienceBox
@@ -35,7 +37,7 @@ import scala.util.Try
     """<h3 *ngIf="character">Customizing {{character.metaDescriptors.name}}{{charactercastestr}}</h3>
       |
       |
-      |<charm-component-vanilla></charm-component-vanilla>
+      |<charm-component-vanilla *ngIf="character" [solar]="character" (createdCustom)="customCharmPurchased($event)" (purchasedListed)="listedCharmPurchased($event)"></charm-component-vanilla>
       |
       |
       |<hr>
@@ -167,6 +169,18 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   def ownerChanged(owner : Email) : Unit = {
     val f = vanillaControlService.enqueueCommand(SetOwner(id, owner))
   }
+
+
+  def customCharmPurchased(newCharm : CustomPower) : Unit = {
+    println(s"Custom Charm Purchased $newCharm")
+    ???
+  }
+
+  def listedCharmPurchased(newCharm : Power) : Unit = {
+    println(s"Listed Charm Purchased $newCharm")
+    ???
+  }
+
 
   def meritPairsChanged(change : DottedStringPairChange) : Unit = {
     println(s"Merit pairs changed via $change")

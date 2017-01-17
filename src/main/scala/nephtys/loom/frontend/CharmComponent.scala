@@ -6,8 +6,9 @@ import angulate2.core.EventEmitter
 import angulate2.core.OnChanges.SimpleChanges
 import angulate2.std._
 import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
-import nephtys.loom.protocol.shared.Power
-import nephtys.loom.protocol.shared.{CharmRef, Powers}
+import nephtys.loom.protocol.shared.CharmDatastructures.{CharmType, Simple, Terrestrial}
+import nephtys.loom.protocol.shared.CustomPowers._
+import nephtys.loom.protocol.shared.{CharmDatastructures, CharmRef, Power, Powers}
 import nephtys.loom.protocol.vanilla.solar.{Characters, Solar}
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 
@@ -160,9 +161,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
       |
       |<div class="form-group">
       |  <label for="usr">Name:</label>
-      |  <input type="text" class="form-control" id="name" [(value)]="customName">
+      |  <input type="text" class="form-control" id="name" [(ngModel)]="customName">
       |  <label for="usr">Description:</label>
-      |  <textarea class="form-control" id="description" [(value)]="customDescription"></textarea>
+      |  <textarea class="form-control" id="description" [(ngModel)]="customDescription"></textarea>
       |</div>
       |
       |
@@ -220,9 +221,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
       |
       |<div class="form-group">
       |  <label for="usr">Cost:</label>
-      |  <input type="text" class="form-control" id="cost" [(value)]="customCost">
+      |  <input type="text" class="form-control" id="cost" [(ngModel)]="customCost">
       |  <label  for="usr">Duration:</label>
-      |  <input type="text" class="form-control" id="duration" [(value)]="customDuration">
+      |  <input type="text" class="form-control" id="duration" [(ngModel)]="customDuration">
       |</div>
       |
       |
@@ -236,16 +237,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
       |    <option *ngFor="let c of possibleCostTypes">{{c}}</option>
       |  </select>
       |  <label for="costselector">Number:</label>
-      |  <input type="number" class="form-control" id="costselector" [(value)]="customCostAmount">
+      |  <input type="number" class="form-control" id="costselector" [(ngModel)]="customCostAmount">
       |
       |  <label *ngIf="customCostType === possibleCostTypes[0]" for="secondarycostselector">Solar XP:</label>
-      |  <input *ngIf="customCostType === possibleCostTypes[0]" type="number" class="form-control" id="secondarycostselector" [(value)]="customCostAmount2">
+      |  <input *ngIf="customCostType === possibleCostTypes[0]" type="number" class="form-control" id="secondarycostselector" [(ngModel)]="customCostAmount2">
       |</div>
       |
       |
       |
       |<div>
-      |   <button type="button" class="btn btn-primary" (click)="submitCustomPower()">Purchase Custom Charm</button>
+      |   <button type="button" [disabled]="customName.length <= 2" class="btn btn-primary" (click)="submitCustomPower()">Purchase Custom Charm</button>
       |  </div>
       |
       |  </tab-control>
@@ -284,6 +285,39 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
   var keywords : Seq[String] = Seq.empty
 
 
+
+  def submitCustomPower() : Unit = {
+    println("CustomName: " + customName)
+
+
+    val cost : CustomCost = if (customCostType == possibleCostTypes(0)) {
+      ExperiencePointCost(customCostAmount, customCostAmount2)
+    } else if (customCostType == possibleCostTypes(1)) {
+      BonusPointCost(customCostAmount)
+    } else if (customCostType == possibleCostTypes(2)) {
+      FreePointCost(customCostAmount)
+    } else {throw new IllegalArgumentException}
+    val t : CharmType = CharmDatastructures.CharmTypes.getOrElse(customTypeSelector, Simple)
+    val c : CustomPower = if (selectablePowerTypes(0) == selectedPowerType) {
+      CustomSolarCharm(essence = customEssenceRating, ability = customAbilitySelector, abilityRating = 1,
+        charmtype = t, name = customName, description = customDescription, cost = customCost,
+        keyword = keywords.toSet, duration = customDuration, customCost = cost)
+    } else if (selectablePowerTypes(1) == selectedPowerType) {
+      CustomSpell(circle = CharmDatastructures.Circles.getOrElse(customCircle, Terrestrial),
+        name = customName, description = customDescription, cost = customCost, keyword = keywords.toSet, duration = customDuration, customCost = cost)
+    } else if (selectablePowerTypes(2) == selectedPowerType) {
+      CustomEvocation(essence = customEssenceRating, charmtype = t,
+        name = customName, description = customDescription,
+        cost = customCost, keyword = keywords.toSet, duration = customDuration, customCost = cost)
+    } else {
+      throw new IllegalArgumentException
+    }
+    this.customName = ""
+    this.createdCustom.emit(c)
+  }
+
+
+
   //TODO: design concept for OK/Cancel / and to go back
 
 
@@ -295,7 +329,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
   val purchasedListed = new EventEmitter[Power with Product with Serializable]()
 
   @Output
-  val createdCustom = new EventEmitter[CharmCustomPack]()
+  val createdCustom = new EventEmitter[CustomPower]()
 
 
 
@@ -305,10 +339,6 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
     case StringListEdit(index, value) => keywords = keywords.take(index).+:(value).++(keywords.drop(index + 1))
   }
 
-
-  def submitCustomPower() : Unit = {
-    ???
-  }
 
   def purchaseClicked(power : Power with Product with Serializable ) : Unit = {
     println(s"purchaseClicked with $power")
