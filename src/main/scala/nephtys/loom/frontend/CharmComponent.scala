@@ -237,6 +237,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
       |  </select>
       |  <label for="costselector">Number:</label>
       |  <input type="number" class="form-control" id="costselector" [(value)]="customCostAmount">
+      |
+      |  <label *ngIf="customCostType === possibleCostTypes[0]" for="secondarycostselector">Solar XP:</label>
+      |  <input *ngIf="customCostType === possibleCostTypes[0]" type="number" class="form-control" id="secondarycostselector" [(value)]="customCostAmount2">
       |</div>
       |
       |
@@ -275,6 +278,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
   var customTypeSelector : String = "Reflexive"
   var customCostType : String = possibleCostTypes(0)
   var customCostAmount : Int = 1
+  var customCostAmount2 : Int = 1
 
 
   var keywords : Seq[String] = Seq.empty

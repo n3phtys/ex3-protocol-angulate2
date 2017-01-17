@@ -32,7 +32,7 @@ import scala.util.Try
 @Component(
   selector = "detail-edit-vanilla",
   template =
-    """<h3 *ngIf="character">Customizing {{character.name}}{{charactercastestr}}</h3>
+    """<h3 *ngIf="character">Customizing {{character.metaDescriptors.name}}{{charactercastestr}}</h3>
       |
       |
       |<charm-component-vanilla></charm-component-vanilla>
