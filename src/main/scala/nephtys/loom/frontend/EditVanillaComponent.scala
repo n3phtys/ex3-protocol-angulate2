@@ -198,20 +198,20 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
       println("newmap changed in editvanilla component")
     val c : mutable.Buffer[SolarCommand] = mutable.Buffer()
     println(s"newmap: $newmap")
-    println(s"character: ${character.name} / ${character.player} / ${character.concept} / ${character.anima} / ${character.limitTrigger}")
-    if (!map("Name").equals(character.name)) {
+    println(s"character: ${character.metaDescriptors.name} / ${character.metaDescriptors.player} / ${character.metaDescriptors.concept} / ${character.metaDescriptors.anima} / ${character.metaDescriptors.limitTrigger}")
+    if (!map("Name").equals(character.metaDescriptors.name)) {
       c += SetName(character.id, name = map("Name"))
     }
-    if (!map("Anima").equals(character.anima)) {
+    if (!map("Anima").equals(character.metaDescriptors.anima)) {
       c += SetAnima(character.id, anima = map("Anima"))
     }
-    if (!map("Concept").equals(character.concept)) {
+    if (!map("Concept").equals(character.metaDescriptors.concept)) {
       c += SetConcept(character.id, concept = map("Concept"))
     }
-    if (!map("Player").equals(character.player)) {
+    if (!map("Player").equals(character.metaDescriptors.player)) {
       c += SetPlayer(character.id, player = map("Player"))
     }
-    if (!map("Limit Trigger").equals(character.limitTrigger)) {
+    if (!map("Limit Trigger").equals(character.metaDescriptors.limitTrigger)) {
       c += SetLimitTrigger(character.id, limitTrigger = map("Limit Trigger"))
     }
     println(s"calculated based on meta map, following changes: $c")
@@ -286,7 +286,7 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
   private def setCharacter(solar : Solar ) : Unit = {
     println(s"setCharacter ${solar.id} called in edit vanilla component")
     character = solar
-    metamap = Seq("Name" -> solar.name, "Player" -> solar.player, "Concept" -> solar.concept, "Anima" -> solar.anima, "Limit Trigger" -> solar.limitTrigger)
+    metamap = Seq("Name" -> solar.metaDescriptors.name, "Player" -> solar.metaDescriptors.player, "Concept" -> solar.metaDescriptors.concept, "Anima" -> solar.metaDescriptors.anima, "Limit Trigger" -> solar.metaDescriptors.limitTrigger)
     specialties = solar.abilities.specialties.flatMap(a => a._2.map(b => StringPair(a._1.name, b.name))).toSeq
     possibleAbilities = solar.abilities.specialtyAbles
     intimacies = solar.intimacies.map(a => StringPair(selected = a._2.toString, written = a._1)).toSeq
