@@ -9,7 +9,7 @@ import nephtys.dualframe.cqrs.client.{DottedStringPair, DottedStringPairChange}
 import nephtys.dualframe.cqrs.client.DottedStringPairChange.DottedStringPairChange
 import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
 import nephtys.loom.protocol.shared.CustomPowers.CustomPower
-import nephtys.loom.protocol.shared.Power
+import nephtys.loom.protocol.shared.{Power, Powers}
 import nephtys.loom.protocol.vanilla.solar.Abilities.{AbilityLikeSpecialtyAble, AbilityMatrix, Specialty}
 import nephtys.loom.protocol.vanilla.solar.Attributes.AttributeBlock
 import nephtys.loom.protocol.vanilla.solar.Experiences.ExperienceBox
@@ -173,12 +173,13 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
 
   def customCharmPurchased(newCharm : CustomPower) : Unit = {
     println(s"Custom Charm Purchased $newCharm")
-    ???
+    val f = vanillaControlService.enqueueCommand(PurchaseCustomCharm(id, newCharm))
   }
 
-  def listedCharmPurchased(newCharm : Power) : Unit = {
+  def listedCharmPurchased(newCharm : Power with Product with Serializable) : Unit = {
     println(s"Listed Charm Purchased $newCharm")
-    ???
+    val charmIndex : Int = Powers.powersIndexMap.getOrElse(newCharm, -1)
+    val f = vanillaControlService.enqueueCommand(PurchaseListCharm(id, charmIndex))
   }
 
 

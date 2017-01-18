@@ -151,6 +151,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
       |  <tab-control title="Custom Charm">
       |
       |
+      | <div *ngIf="customCharms.length > 0" >
+      | <label>Already Purchased Custom Charms:</label>
+      | <ol>
+      | <li *ngFor="let c of customCharms">{{c}}</li>
+      | </ol>
+      | </div>
+      |
+      |
+      |
       |   <div class="form-group">
       |  <label for="sel1">Select Type:</label>
       |  <select  [(ngModel)]="selectedPowerType" class="form-control" id="sel1">
@@ -239,8 +248,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
       |  <label for="costselector">Number:</label>
       |  <input type="number" class="form-control" id="costselector" [(ngModel)]="customCostAmount">
       |
-      |  <label *ngIf="customCostType === possibleCostTypes[0]" for="secondarycostselector">Solar XP:</label>
-      |  <input *ngIf="customCostType === possibleCostTypes[0]" type="number" class="form-control" id="secondarycostselector" [(ngModel)]="customCostAmount2">
+      |
+      |    <div class="checkbox" *ngIf="customCostType === possibleCostTypes[0]">
+      |        <label>
+      |          <input type="checkbox" name="useSolarXP" [(ngModel)]="customUseSolarXP">
+      |          Use Solar XP too
+      |        </label>
+      |      </div>
       |</div>
       |
       |
@@ -266,7 +280,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
   val possibleCostTypes : js.Array[String] = js.Array("Experience", "Bonus Points", "Free Point Buy Charms")
   var selectableAbilities : js.Array[String] = js.Array("Archery")
 
-
+  var customCharms : js.Array[CustomPower] = js.Array()
 
   var selectedPowerType : String = selectablePowerTypes(0)
   var customName : String = "Mindful Invention Prana"
@@ -279,7 +293,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
   var customTypeSelector : String = "Reflexive"
   var customCostType : String = possibleCostTypes(0)
   var customCostAmount : Int = 1
-  var customCostAmount2 : Int = 1
+  var customUseSolarXP : Boolean = false
 
 
   var keywords : Seq[String] = Seq.empty
@@ -291,7 +305,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
 
 
     val cost : CustomCost = if (customCostType == possibleCostTypes(0)) {
-      ExperiencePointCost(customCostAmount, customCostAmount2)
+      ExperiencePointCost(customCostAmount, customUseSolarXP)
     } else if (customCostType == possibleCostTypes(1)) {
       BonusPointCost(customCostAmount)
     } else if (customCostType == possibleCostTypes(2)) {
@@ -354,6 +368,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
       selectableAbilities = solar.abilities.abilities.map(_.name).toSeq.sorted.toJSArray
 
       charmService.recalculateForCharacter(solar).foreach(s => println("Recalculated Charms"))
+      customCharms = solar.customCharms.toJSArray
     }
   }
   inputChanged()
