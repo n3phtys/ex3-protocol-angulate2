@@ -37,7 +37,6 @@ import scala.util.Try
     """<h3 *ngIf="character">Customizing {{character.metaDescriptors.name}}{{charactercastestr}}</h3>
       |
       |
-      |<charm-component-vanilla *ngIf="character" [solar]="character" (createdCustom)="customCharmPurchased($event)" (purchasedListed)="listedCharmPurchased($event)"></charm-component-vanilla>
       |
       |
       |<hr>
@@ -68,6 +67,9 @@ import scala.util.Try
       |</collapsed-well>
       |
       |
+      |<collapsed-well title="Charms & Spells">
+      |<charm-component-vanilla *ngIf="character" [solar]="character" (createdCustom)="customCharmPurchased($event)" (purchasedListed)="listedCharmPurchased($event)"></charm-component-vanilla>
+      |</collapsed-well>
       |
       |<collapsed-well title="Merits">
       |<dotted-string-list title=""
