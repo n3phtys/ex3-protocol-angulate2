@@ -157,8 +157,10 @@ collectFull := {
             val targetpath : Path = Paths.get(path.toString.replace(source, target))
             val parent : File = targetpath.toFile.getParentFile
             if (parent.exists() || parent.mkdirs()) {
-              sb.++=(targetpath.toString.substring(3).replace('\\', '/'))
-              sb.++=("\n")
+              if(targetpath.toString.endsWith(".js") || targetpath.toString.endsWith(".html") || targetpath.toString.endsWith(".jpg") || targetpath.toString.endsWith(".png") || targetpath.toString.endsWith(".css")) {
+                sb.++=(targetpath.toString.substring(3).replace('\\', '/'))
+                sb.++=("\n")
+              }
               Files.copy(path, targetpath, StandardCopyOption.REPLACE_EXISTING)
             } else {
               println("could not create file")
