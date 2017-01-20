@@ -367,7 +367,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
     if (solar != null) {
       selectableAbilities = solar.abilities.abilities.map(_.name).toSeq.sorted.toJSArray
 
-      charmService.recalculateForCharacter(solar).foreach(s => println("Recalculated Charms"))
+      charmService.recalculateForCharacter(solar)//.foreach(s => println("Recalculated Charms"))
       customCharms = solar.customCharms.toJSArray
     }
   }

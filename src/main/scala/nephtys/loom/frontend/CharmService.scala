@@ -1,13 +1,17 @@
 package nephtys.loom.frontend
 
+import java.util.UUID
+
 import angulate2.std.Injectable
 import nephtys.loom.protocol.shared.Charms.Evocation
 import nephtys.loom.protocol.shared.Powers.SolarCharms
 import nephtys.loom.protocol.shared.{SolarCharm, _}
 import nephtys.loom.protocol.vanilla.solar.Abilities.Supernal
 import nephtys.loom.protocol.vanilla.solar._
+import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
+import rxscalajs.subjects.BehaviorSubject
 
-import scala.concurrent.Future
+import scala.concurrent.{Future, duration}
 import scala.scalajs.js
 import scala.scalajs.js
 import scala.scalajs.js.Array
@@ -15,6 +19,7 @@ import scala.scalajs.js.JSConverters._
 import scala.scalajs.js.Array
 import scala.scalajs.js.JSConverters._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.util.Failure
 
 /**
@@ -25,10 +30,14 @@ class CharmService {
 
   println("CharmService initialized")
 
-  def recalculateForCharacter(character : CharmLearnable) : Future[Unit] = {
+
+  private val behaviorSubject = BehaviorSubject[CharmLearnable]( Characters.emptySolar(ID[Solar](UUID.randomUUID()), Email("something@email.org")) )
+  private val debouncedTrigger = behaviorSubject.debounceTime(FiniteDuration(5, duration.SECONDS))
+  private val subscription = debouncedTrigger.subscribe(unit => uncachedRecalc(unit).foreach(s => println("Charms recalculated for Solar")))
+
+  def recalculateForCharacter(character : CharmLearnable) : Unit = {
     println("recalculating charms...")
-    //TODO: use debounce to prevent flooding
-    uncachedRecalc(character)
+    behaviorSubject.next(character)
   }
 
   //val Unknown : Int = 0
