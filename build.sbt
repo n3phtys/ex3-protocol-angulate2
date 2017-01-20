@@ -125,6 +125,10 @@ val manifestPostlist : String =
     |https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css
     |https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js
     |https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css
+    |https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.woff2
+    |https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.woff
+    |https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/fonts/glyphicons-halflings-regular.ttf
+    |
     |
     |NETWORK:
     |/vanillasolar/aggregates
