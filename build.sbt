@@ -115,6 +115,7 @@ val copyFilesFull : Map[String, String] = Map("index-full.html" -> "web/index.ht
 val manifestPostlist : String =
   s"""
     |/index.html
+    |/
     |/package.json
     |/systemjs.config.js
     |/target/scala-$shortVersion/ex3-protocol-angulate-fastopt.js
