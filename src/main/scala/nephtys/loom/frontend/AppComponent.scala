@@ -33,9 +33,10 @@ import angulate2.std.Component
  |        </li>
  |        <!--li><a href="#">Page 2</a></li>
  |        <li><a href="#">Page 3</a></li-->
+ |        <li><a ><url-select></url-select></a></li>
  |      </ul>
  |      <ul class="nav navbar-nav navbar-right">
- |        <li><login-info></login-info></li>
+ |        <!--li><login-info></login-info></li-->
  |        <li><google-plus-login></google-plus-login></li>
  |      </ul>
  |    </div>

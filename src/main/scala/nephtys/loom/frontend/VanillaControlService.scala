@@ -30,6 +30,7 @@ class VanillaControlService(aggregateService: VanillaInMemoryService, httpServic
   protected val debounced: Observable[Boolean] = pushSubject.debounceTime(FiniteDuration(3, TimeUnit.SECONDS))
 
   protected def refreshFromRemote() : Future[Boolean] = {
+    println("Refreshing from remote")
     val p = Promise[Boolean]()
     val f = httpService.get("aggregates", endpoint).map(a => read[Seq[Solar]](a.body))
     f.onComplete {
@@ -47,9 +48,11 @@ class VanillaControlService(aggregateService: VanillaInMemoryService, httpServic
   protected def pushOpenChangesToRemote() : Future[Boolean] = {
     val seq = commandService.retreiveOpenCommands
     if (seq._1.isEmpty) {
+      println("No commands to push")
       Future.successful(true)
     } else {
       val p = Promise[Boolean]()
+      println(s"Found commands to push, #${seq._1.size}")
       //try to send over http
       val json : String = write(seq._1)
       val f = httpService.post("commands", json, endpoint)
@@ -71,6 +74,7 @@ class VanillaControlService(aggregateService: VanillaInMemoryService, httpServic
   }
 
   debounced.subscribe(onNext = (b : Boolean) => {
+    println("Debounced in VanillaControl Triggered")
     pushOpenChangesToRemote().flatMap(a => if(a) {
       refreshFromRemote()
     } else { Future.successful(false)}).foreach(b =>  println(if(b) "Refreshed content by remote data call" else "couldn't update from remote (offline?)"))
