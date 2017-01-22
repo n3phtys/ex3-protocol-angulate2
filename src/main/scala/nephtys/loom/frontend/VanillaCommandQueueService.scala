@@ -25,9 +25,20 @@ class VanillaCommandQueueService(idb: IDBPersistenceService) {
   private val onItsWayQueue : mutable.Queue[VanillaCommandPersistencePack] = mutable.Queue()
   private val inMemoryQueue : mutable.Queue[VanillaCommandPersistencePack] = mutable.Queue()
 
+  //TODO: wait for this
+
   //fill with values from indexedDB async after start
-  idb.getAllAsync(commandStore = true).map(seq => seq.map(s => read[VanillaCommandPersistencePack](s)).sortBy(_.uniqueTimestamp)).foreach(
-    seq => seq.foreach(e => inMemoryQueue.:+(e))
+  private val loadedFuture : Future[_] = idb.getAllAsync(commandStore = true).map(seq => seq.map(s => {
+    println(s"Reading $s while parsing commands")
+    read[VanillaCommandPersistencePack](s)
+  }).sortBy(_.uniqueTimestamp)).map(
+    seq => {
+      seq.foreach(e => {
+        println(s"Found Command: $e")
+        inMemoryQueue.+=(e)
+      })
+      println(s"Finished getting all Commands from Database, queues now: $onItsWayQueue - $inMemoryQueue")
+    }
   )
 
   /**
@@ -38,7 +49,7 @@ class VanillaCommandQueueService(idb: IDBPersistenceService) {
     */
   def store(command : SolarCommand) : Future[UUID] = {
     val c = VanillaCommandPersistencePack(UUID.randomUUID(), newUniqueTimestamp(), command)
-    inMemoryQueue.:+(c)
+    inMemoryQueue.+=(c)
     idb.setAsync(c.uuid, write(c), commandStore = true).map(f => c.uuid)
   }
 
@@ -51,11 +62,13 @@ class VanillaCommandQueueService(idb: IDBPersistenceService) {
     * takes the in-memory copy and moves it to a pool of sent commands ("on its way")
     * @return
     */
-  def retreiveOpenCommands : (Seq[SolarCommand], Seq[UUID]) = {
+  def retreiveOpenCommands : Future[(Seq[SolarCommand], Seq[UUID])] = loadedFuture.map( s => {
+    println(s"Current Queue State $onItsWayQueue - $inMemoryQueue")
     val s : Seq[VanillaCommandPersistencePack] = inMemoryQueue.dequeueAll(e => true)
     s.foreach(c => onItsWayQueue.enqueue(c))
+    println(s"Taking Commands $s")
     (s.map(_.command), s.map(_.uuid))
-  }
+  })
 
   /**
     * moves the given commands back into the open queue (as head list)

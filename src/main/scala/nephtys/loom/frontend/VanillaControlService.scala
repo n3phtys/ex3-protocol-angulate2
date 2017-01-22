@@ -46,31 +46,33 @@ class VanillaControlService(aggregateService: VanillaInMemoryService, httpServic
   }
   protected def endpoint : Option[String] = Some(SolarProtocol.endpointRoot.prefix)
   protected def pushOpenChangesToRemote() : Future[Boolean] = {
-    val seq = commandService.retreiveOpenCommands
-    if (seq._1.isEmpty) {
-      println("No commands to push")
-      Future.successful(true)
-    } else {
-      val p = Promise[Boolean]()
-      println(s"Found commands to push, #${seq._1.size}")
-      //try to send over http
-      val json : String = write(seq._1)
-      val f = httpService.post("commands", json, endpoint)
-      f.onComplete {
-        case Failure(e) => {
-          //if http fails, revert command service, and just fail
-          commandService.failedTransmission(seq._2)
-          p.trySuccess(false)
+    val seqf = commandService.retreiveOpenCommands
+    seqf.flatMap(seq => {
+      if (seq._1.isEmpty) {
+        println("No commands to push")
+        Future.successful(true)
+      } else {
+        val p = Promise[Boolean]()
+        println(s"Found commands to push, #${seq._1.size}")
+        //try to send over http
+        val json: String = write(seq._1)
+        val f = httpService.post("commands", json, endpoint)
+        f.onComplete {
+          case Failure(e) => {
+            //if http fails, revert command service, and just fail
+            commandService.failedTransmission(seq._2)
+            p.trySuccess(false)
+          }
+          case Success(t) => {
+            //if http succeeds, delete commands locally
+            commandService.setAsTransmittedAndRemove(seq._2)
+            p.trySuccess(true)
+          }
         }
-        case Success(t) => {
-          //if http succeeds, delete commands locally
-          commandService.setAsTransmittedAndRemove(seq._2)
-          p.trySuccess(true)
-        }
-      }
 
-      p.future
-    }
+        p.future
+      }
+    })
   }
 
   debounced.subscribe(onNext = (b : Boolean) => {
