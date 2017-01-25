@@ -1,7 +1,7 @@
 package nephtys.loom.frontend
 
 import angulate2.std.Injectable
-import nephtys.loom.protocol.chronicles.solar.ChroniclesSolarProtocol.{SolarCommand, SolarEvent}
+import nephtys.loom.protocol.zprotocols.ZChroniclesSolarProtocol.{SolarCommand, SolarEvent}
 
 import scala.concurrent.Future
 import scala.util.Try

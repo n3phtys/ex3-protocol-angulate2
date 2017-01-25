@@ -2,8 +2,6 @@ package nephtys.loom.frontend
 
 import java.util.UUID
 
-import nephtys.loom.protocol.vanilla.solar.SolarProtocol
-import nephtys.loom.protocol.vanilla.solar.SolarProtocol.SolarCommand
 
 /**
   * Created by nephtys on 12/16/16.

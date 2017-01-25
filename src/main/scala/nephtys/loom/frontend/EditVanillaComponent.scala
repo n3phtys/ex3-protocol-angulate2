@@ -14,7 +14,7 @@ import nephtys.loom.protocol.vanilla.solar.Abilities.{AbilityLikeSpecialtyAble, 
 import nephtys.loom.protocol.vanilla.solar.Attributes.AttributeBlock
 import nephtys.loom.protocol.vanilla.solar.Experiences.ExperienceBox
 import nephtys.loom.protocol.vanilla.solar.Misc.Caste
-import nephtys.loom.protocol.vanilla.solar.SolarProtocol._
+import nephtys.loom.protocol.zprotocols.ZSolarProtocol._
 import nephtys.loom.protocol.vanilla.solar._
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 import rxscalajs.subjects.BehaviorSubject

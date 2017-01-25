@@ -6,8 +6,9 @@ import java.util.concurrent.TimeUnit
 import angulate2.std.Injectable
 import nephtys.dualframe.cqrs.client.HttpService
 import nephtys.dualframe.cqrs.client.httphelper.HttpResults
-import nephtys.loom.protocol.vanilla.solar.{Solar, SolarProtocol}
-import nephtys.loom.protocol.vanilla.solar.SolarProtocol.{SolarCommand, SolarEvent}
+import nephtys.loom.protocol.vanilla.solar.Solar
+import nephtys.loom.protocol.zprotocols.ZSolarProtocol
+import nephtys.loom.protocol.zprotocols.ZSolarProtocol.{SolarCommand, SolarEvent}
 import org.nephtys.loom.generic.protocol.InternalStructures.{EndpointRoot, FailableList}
 import rxscalajs.Observable
 import upickle.default._
@@ -44,7 +45,7 @@ class VanillaControlService(aggregateService: VanillaInMemoryService, httpServic
     }
     p.future
   }
-  protected def endpoint : Option[String] = Some(SolarProtocol.endpointRoot.prefix)
+  protected def endpoint : Option[String] = Some(ZSolarProtocol.endpointRoot.prefix)
   protected def pushOpenChangesToRemote() : Future[Boolean] = {
     val seqf = commandService.retreiveOpenCommands
     seqf.flatMap(seq => {

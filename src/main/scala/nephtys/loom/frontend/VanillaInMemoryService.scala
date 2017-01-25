@@ -4,8 +4,9 @@ package nephtys.loom.frontend
 import angulate2.std.Injectable
 import nephtys.dualframe.cqrs.client.{IDBConfig, IDBPersistenceService, TokenService}
 import nephtys.loom.frontend.IncrementalChanges.{Deletion, Insertion, Update}
-import nephtys.loom.protocol.vanilla.solar.{Solar, SolarProtocol}
-import nephtys.loom.protocol.vanilla.solar.SolarProtocol.{SolarCommand, SolarEvent}
+import nephtys.loom.protocol.vanilla.solar.Solar
+import nephtys.loom.protocol.zprotocols.ZSolarProtocol
+import nephtys.loom.protocol.zprotocols.ZSolarProtocol.{SolarCommand, SolarEvent}
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 import rxscalajs.subjects.BehaviorSubject
 import upickle.default._
@@ -94,8 +95,8 @@ class VanillaInMemoryService(idb: IDBPersistenceService, tokenService: TokenServ
   }
 
   protected def findDiffSingle(event : SolarEvent) : IncrementalChanges.Change = event match {
-    case SolarProtocol.Creation(owner, id) => IncrementalChanges.Insertion(id.id)
-    case SolarProtocol.Deletion(id) => IncrementalChanges.Deletion(id.id)
+    case ZSolarProtocol.Creation(owner, id) => IncrementalChanges.Insertion(id.id)
+    case ZSolarProtocol.Deletion(id) => IncrementalChanges.Deletion(id.id)
     case _ => IncrementalChanges.Update(event.id.id)
   }
 

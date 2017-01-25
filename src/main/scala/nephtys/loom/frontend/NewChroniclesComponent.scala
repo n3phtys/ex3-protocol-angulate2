@@ -5,7 +5,7 @@ import java.util.UUID
 import angulate2.router.Router
 import angulate2.std.{Component, OnInit}
 import nephtys.dualframe.cqrs.client.TokenService
-import nephtys.loom.protocol.chronicles.solar.ChroniclesSolarProtocol.{Create, SetName, SolarCommand}
+import nephtys.loom.protocol.zprotocols.ZChroniclesSolarProtocol.{Create, SetName, SolarCommand}
 import nephtys.loom.protocol.chronicles.solar.Solar
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 

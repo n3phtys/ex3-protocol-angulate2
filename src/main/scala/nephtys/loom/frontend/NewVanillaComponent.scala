@@ -6,7 +6,7 @@ import angulate2.router.Router
 import angulate2.std.{Component, OnInit}
 import nephtys.dualframe.cqrs.client.TokenService
 import nephtys.loom.protocol.vanilla.solar.Solar
-import nephtys.loom.protocol.vanilla.solar.SolarProtocol.{Create, SetName, SolarCommand}
+import nephtys.loom.protocol.zprotocols.ZSolarProtocol.{Create, SetName, SolarCommand}
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 import rxjs.Observer
 

@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicLong
 
 import angulate2.std.Injectable
 import nephtys.dualframe.cqrs.client.{IDBConfig, IDBPersistenceService}
-import nephtys.loom.protocol.vanilla.solar.SolarProtocol.SolarCommand
+import nephtys.loom.protocol.zprotocols.ZSolarProtocol.SolarCommand
 import upickle.default._
 
 import scala.collection.mutable
