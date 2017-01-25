@@ -109,7 +109,8 @@ val copyFilesFull : Map[String, String] = Map("index-full.html" -> "web/index.ht
   s"target/scala-$shortVersion/ex3-protocol-angulate-opt.js" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-fastopt.js",
   s"target/scala-$shortVersion/ex3-protocol-angulate-jsdeps.js" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-jsdeps.js",
   s"target/scala-$shortVersion/ex3-protocol-angulate-sjsx.js" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-sjsx.js",
-  s"target/scala-$shortVersion/ex3-protocol-angulate-opt.js.map" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-fastopt.js.map"
+  s"target/scala-$shortVersion/ex3-protocol-angulate-opt.js.map" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-fastopt.js.map",
+  s"target/scala-$shortVersion/ex3-protocol-angulate-opt.js.map" -> s"web/target/scala-$shortVersion/ex3-protocol-angulate-opt.js.map"
 )
 
 val manifestPostlist : String =
