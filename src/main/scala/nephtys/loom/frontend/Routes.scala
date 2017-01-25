@@ -16,18 +16,35 @@ object Routes {
 
   val routes : js.Array[Route] = {
     js.Array(Route(
+      path = "overview",
+      component = %%[AllProtocolsOverviewComponent]
+    ),Route(
       path = "new/vanilla",
       component = %%[NewVanillaComponent]
     ),Route(
       path = "dashboard/vanilla",
       component = %%[DashboardVanillaComponent]
     ),Route(
-      path = "",
-      redirectTo = "/dashboard/vanilla",
-      pathMatch = "full"
-    ),Route(
       path = "detail/vanilla/:id",
       component = %%[EditVanillaComponent]
-    ))
+    ),Route(
+      path = "new/chronicles",
+      component = %%[NewChroniclesComponent]
+    ),Route(
+      path = "dashboard/chronicles",
+      component = %%[MainTableChroniclesComponent]
+    ),Route(
+      path = "detail/chronicles/:id",
+      component = %%[EditChroniclesComponent]
+    ),
+
+      Route(
+      path = "",
+      redirectTo = "overview",
+      pathMatch = "full"
+    )
+
+
+    )
   }
 }

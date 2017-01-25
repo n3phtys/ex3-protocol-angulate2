@@ -15,10 +15,10 @@ import scala.scalajs.js.Object
   * Created by nephtys on 12/8/16.
   */
 @NgModule(
-  imports = @@[ClientFrameModule, BrowserModule, FormsModule, LoginModule] :+
+  imports = @@[ClientFrameModule, BrowserModule, FormsModule, LoginModule, ChroniclesSolarModule, SharedComponentsModule] :+
     RouterModule.forRoot(Routes.routes, js.Dynamic.literal(useHash = true)),
-  providers = @@[CharmService, VanillaControlService, VanillaInMemoryService, VanillaCommandQueueService],
-  declarations = @@[AppComponent, CharmComponent, AbilityComponent, PointsLeftComponent, AttributeComponent, VanillaExperienceComponent, StringPairComponent, NewVanillaComponent,DashboardVanillaComponent, MainTableVanillaComponent, EditVanillaComponent],
+  providers = @@[VanillaControlService, VanillaInMemoryService, VanillaCommandQueueService],
+  declarations = @@[AppComponent, AllProtocolsOverviewComponent, AbilityComponent, PointsLeftComponent, VanillaExperienceComponent, NewVanillaComponent,DashboardVanillaComponent, MainTableVanillaComponent, EditVanillaComponent],
   bootstrap = @@[AppComponent]
 )
 class AppModule {
