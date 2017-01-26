@@ -9,7 +9,7 @@ import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDel
 import nephtys.loom.protocol.shared.CharmDatastructures.{CharmType, Simple, Terrestrial}
 import nephtys.loom.protocol.shared.CustomPowers._
 import nephtys.loom.protocol.shared.{CharmDatastructures, CharmRef, Power, Powers}
-import nephtys.loom.protocol.vanilla.solar.{Characters, Solar}
+import nephtys.loom.protocol.vanilla.solar.{Characters, CharmLearnable, Solar}
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 
 import scala.scalajs.js
@@ -337,7 +337,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
 
 
   @Input
-  var solar : Solar = Characters.emptySolar(ID[Solar](UUID.randomUUID()), Email("something@email.org"))
+  var solar : CharmLearnable = Characters.emptySolar(ID[Solar](UUID.randomUUID()), Email("something@email.org"))
 
   @Output
   val purchasedListed = new EventEmitter[Power with Product with Serializable]()
@@ -365,8 +365,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
 
   private def inputChanged() : Unit = {
     if (solar != null) {
-      selectableAbilities = solar.abilities.abilities.map(_.name).toSeq.sorted.toJSArray
-
+      selectableAbilities = solar.selectableAbilities.sorted.toJSArray
       charmService.recalculateForCharacter(solar)//.foreach(s => println("Recalculated Charms"))
       customCharms = solar.customCharms.toJSArray
     }

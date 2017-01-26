@@ -15,5 +15,6 @@ class ChroniclesControlService {
   def enqueueCommands(commands : Seq[SolarCommand]) : Future[Seq[Try[SolarEvent]]] = {
     ???
   }
+  def enqueueCommand(command : SolarCommand) : Future[Seq[Try[SolarEvent]]] = enqueueCommands(Seq(command))
 
 }
