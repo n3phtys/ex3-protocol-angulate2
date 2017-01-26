@@ -102,6 +102,12 @@ class CharmService {
     case s : SolarCircleSpell => SolarCircleSpellType
   }
 
+  /**
+    * None for already in posession, Some(true) for purchaseable and Some(false) for unpurchaseable
+    * @param solar
+    * @param charmIndex
+    * @return
+    */
   private def calculateSingleCharm(solar : CharmLearnable, charmIndex : Int) : Future[Option[Boolean]] = {
     if (solar.has(charmIndex)) {
       Future.successful(None)
@@ -139,11 +145,14 @@ class CharmService {
         }
       }
       def checkPredef(set : Set[Int]) : Future[Option[Boolean]] = {
-        println("checkPredef called")
-        Future.sequence(set.map(i => powerStates(i))).map(seq => Some(seq.forall(_.contains(true))))
+        println(s"checkPredef of power ${Powers.powers(charmIndex)} called for set $set, which is ${set.map(i => Powers.powers(i))}")
+        Future.sequence(set.map(i => powerStates(i))).map(seq => Some(seq.forall(o => o.isEmpty || o.get)))
       }
 
-      f.flatMap(a => if(a._1) checkPredef(a._2.prerequisite.map(p => Powers.powersIndexMap.getOrElse(p,0))) else Future.successful(Some(false)))
+      f.flatMap(a => {
+        println(s"a of power ${Powers.powers(charmIndex)} = $a")
+        if(a._1) checkPredef(a._2.prerequisite.map(p => Powers.powersIndexMap.getOrElse(p,0))) else Future.successful(Some(false))
+      })
     }
   }
 
