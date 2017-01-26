@@ -32,12 +32,38 @@ class CharmService {
 
 
   private val behaviorSubject = BehaviorSubject[CharmLearnable]( Characters.emptySolar(ID[Solar](UUID.randomUUID()), Email("something@email.org")) )
-  private val debouncedTrigger = behaviorSubject.debounceTime(FiniteDuration(5, duration.SECONDS))
+  private val debouncedTrigger = behaviorSubject.debounceTime(FiniteDuration(3, duration.SECONDS))
   private val subscription = debouncedTrigger.subscribe(unit => uncachedRecalc(unit).foreach(s => println("Charms recalculated for Solar")))
 
   def recalculateForCharacter(character : CharmLearnable) : Unit = {
     println("recalculating charms...")
     behaviorSubject.next(character)
+  }
+
+  def quickBuyListedPowerAndRecalculateSoon(character : CharmLearnable, power : Power with Product with Serializable) : Unit = {
+    power match {
+        //remove from purchaseable list and add to purchased list
+      case s : Spell with Product with Serializable =>  {
+        val indexOld : Int = purchaseableSpells.indexOf(s)
+        val indexNew : Int = nephtys.loom.protocol.Search.binaryIndexOrElse(purchasedSpells, (a : Spell with Product with Serializable) => Powers.powersIndexMap.getOrElse(a, 0), s, purchasedSpells.size)
+        purchaseableSpells.splice(indexOld, 1)
+        purchasedSpells.splice(indexNew, 0, s)
+      }
+      case s : SolarCharm with Product with Serializable =>  {
+        val indexOld : Int = purchaseableSolarCharms.indexOf(s)
+        val indexNew : Int = nephtys.loom.protocol.Search.binaryIndexOrElse(purchasedSolarCharms, (a : SolarCharm with Product with Serializable) => Powers.powersIndexMap.getOrElse(a, 0), s, purchasedSolarCharms.size)
+        purchaseableSolarCharms.splice(indexOld, 1)
+        purchasedSolarCharms.splice(indexNew, 0, s)
+      }
+      case s : Charm with Product with Serializable =>  {
+        val indexOld : Int = purchaseableOtherCharms.indexOf(s)
+        val indexNew : Int = nephtys.loom.protocol.Search.binaryIndexOrElse(purchasedOtherCharms, (a : Charm with Product with Serializable) => Powers.powersIndexMap.getOrElse(a, 0), s, purchasedOtherCharms.size)
+        purchaseableOtherCharms.splice(indexOld, 1)
+        purchasedOtherCharms.splice(indexNew, 0, s)
+      }
+    }
+    //order recalculation for later
+    recalculateForCharacter(character)
   }
 
   //val Unknown : Int = 0

@@ -356,6 +356,7 @@ class CharmComponent(val charmService: CharmService) extends OnChanges {
 
   def purchaseClicked(power : Power with Product with Serializable ) : Unit = {
     println(s"purchaseClicked with $power")
+    charmService.quickBuyListedPowerAndRecalculateSoon(solar, power)
     purchasedListed.emit(power)
   }
 
