@@ -75,7 +75,7 @@ import scala.scalajs.js.JSConverters._
       |
       |
       |<collapsed-well title="Willpower">
-      |<dot-control name="Permanent Willpower"  *ngIf="character"  color="green" [max]="10" [min]="5" [value]="character.willpowerDots" (valueSelected)="willpowerChanged($event)"></dot-control>
+      |<dot-control name="Permanent Willpower"  *ngIf="character"  color="green" [max]="10" [min]="5" [value]="character.directDotValues.willpowerDots" (valueSelected)="willpowerChanged($event)"></dot-control>
       |</collapsed-well>
       |
       |<collapsed-well title="Intimacies">

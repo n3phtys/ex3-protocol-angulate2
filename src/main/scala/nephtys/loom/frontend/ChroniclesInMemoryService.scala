@@ -20,7 +20,7 @@ class ChroniclesInMemoryService {
   def get(id: ID[Solar]) : Option[Solar] = {
     //TODO: improve
     val o = allCharacters.find(_.id.equals(id))
-    println(s"found in $allCharacters with get $id: $o")
+    //println(s"found in $allCharacters with get $id: $o")
     o
   }
 
