@@ -57,7 +57,8 @@ import scala.scalajs.js.JSConverters._
       |
       |
       |<collapsed-well title="Caste & Abilities">
-      |TODO: caste, abilities, specialties
+      |<chronicles-abilities [inputCaste]="character.caste" [inputMatrix]="character.abilities" (abilitiesChange)="abilityChanged($event)">
+      |</chronicles-abilities>
       |</collapsed-well>
       |
       |
@@ -123,12 +124,14 @@ class EditChroniclesComponent(  route: ActivatedRoute, chroniclesInMemoryService
 
   //differences:
   //TODO: custom experience component
-  //TODO: custom ability component
+  //custom ability component
   //String list component for Aspirations
 
   //TODO: custom points-left component
 
   //copy all other components from vanilla component
+
+
 
 
 
@@ -142,6 +145,14 @@ class EditChroniclesComponent(  route: ActivatedRoute, chroniclesInMemoryService
   var metamap : Seq[(String, String)] = Seq.empty
   var meritsAsPairs : IndexedSeq[DottedStringPair] = IndexedSeq.empty
   val meritcategories : js.Array[String] = (Merits.availableCategories.map(_.string) ++ IndexedSeq("Other")).toJSArray
+
+
+
+
+  def abilityChanged(ac : ChroniclesAbilityChange) : Unit = {
+    ??? //TODO: implement
+  }
+
 
 
   def publicStateChanged(b : Boolean) : Unit = {
