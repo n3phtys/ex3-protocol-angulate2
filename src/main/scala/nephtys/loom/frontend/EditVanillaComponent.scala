@@ -113,12 +113,12 @@ import scala.util.Try
       |</collapsed-well>
       |
       |
-      |<div >
+      |<!--div >
       |  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#demo">Full Solar:</button>
       |  <div id="demo" class="collapse">
       | {{character}}
       |  </div>
-      |</div>
+      |</div-->
       |
     """.stripMargin
 )

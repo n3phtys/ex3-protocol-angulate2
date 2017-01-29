@@ -39,8 +39,7 @@ import scala.scalajs.js.JSConverters._
       |
       |
       |<hr>
-      |<!--points-left-chronicles  *ngIf="character"  [character]="character"></points-left-chronicles-->
-      |TODO: points left component
+      |<points-left-chronicles  *ngIf="character"  [character]="character"></points-left-chronicles>
       |<hr>
       |
       |
@@ -97,7 +96,7 @@ import scala.scalajs.js.JSConverters._
       |</collapsed-well>
       |
       |<collapsed-well title="Experience">
-      |TODO: Experience
+      |<chronicles-experience></chronicles-experience>
       |</collapsed-well>
       |
       |

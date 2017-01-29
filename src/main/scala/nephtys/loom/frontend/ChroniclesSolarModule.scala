@@ -14,7 +14,7 @@ import scala.scalajs.js
 @NgModule(
   imports = @@[ClientFrameModule, BrowserModule, FormsModule, SharedComponentsModule],
   providers = @@[ChroniclesControlService, ChroniclesInMemoryService, ChroniclesCommandQueueService],
-  declarations = @@[ChroniclesExperienceComponent, EditChroniclesComponent, MainTableChroniclesComponent, NewChroniclesComponent, ChroniclesAbilityComponent],
+  declarations = @@[ChroniclesExperienceComponent, ChroniclesPointLeftComponent, EditChroniclesComponent, MainTableChroniclesComponent, NewChroniclesComponent, ChroniclesAbilityComponent],
   exports = @@[ EditChroniclesComponent, MainTableChroniclesComponent, NewChroniclesComponent]
 )
 class ChroniclesSolarModule {
