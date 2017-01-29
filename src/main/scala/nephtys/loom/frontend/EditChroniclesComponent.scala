@@ -96,7 +96,11 @@ import scala.scalajs.js.JSConverters._
       |</collapsed-well>
       |
       |<collapsed-well title="Experience">
-      |<chronicles-experience></chronicles-experience>
+      |<chronicles-experience
+      | *ngIf="character"
+      | [input]="character.experience"  [charGenFinishedState]="! character.stillInCharGen"
+      | (charGenFinished)="charGenStateChange($event)" (experienceChange)="experienceBlockChanged($event)"
+      |></chronicles-experience>
       |</collapsed-well>
       |
       |
@@ -126,7 +130,7 @@ class EditChroniclesComponent(  route: ActivatedRoute, chroniclesInMemoryService
   //custom ability component
   //String list component for Aspirations
 
-  //TODO: custom points-left component
+  //custom points-left component
 
   //copy all other components from vanilla component
 
