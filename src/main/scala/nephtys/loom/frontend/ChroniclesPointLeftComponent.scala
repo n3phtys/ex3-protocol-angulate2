@@ -71,7 +71,7 @@ class ChroniclesPointLeftComponent extends OnChanges{
 
   private def generateHighPrio(solar : Solar) : Seq[String] = {
     val experiences : Seq[String] = {
-      val k =  Experiences.Point.asBeats(solar.experience.beatsLeftForSpending)
+      val k =  Experiences.Beat.asPoints(solar.experience.beatsLeftForSpending)
       if (k > 0) {
         Seq(s"You have $k Experience Points left to spend")
       } else Seq.empty

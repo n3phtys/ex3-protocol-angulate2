@@ -18,7 +18,19 @@ import scala.concurrent.ExecutionContext.Implicits.global
   */
 @Component(
   selector = "chronicles-newcomponent",
-  template = """chronicles newcomponent here"""
+  template =
+    """
+      |<h3>Create a new Solar Character</h3>
+      |<form class="form-inline">
+      |  <div class="form-group">
+      |    <label for="email">Randomized Character Name:</label>
+      |    <input type="text" [(ngModel)]="writtenName" name="writtenName" class="form-control" id="email">
+      |  </div>
+      |  <button type="button" (click)="createnew()" [disabled]="writtenName.length === 0" class="btn btn-success"
+      |      >Create new Solar</button>
+      |</form>
+      |
+    """.stripMargin
 )
 class NewChroniclesComponent(router: Router,
                              tokenService: TokenService,
