@@ -167,6 +167,7 @@ class ChroniclesAbilityComponent extends OnInit{
 sealed trait ChroniclesAbilityChange
 final case class ChroniclesCasteChanged(caste : Caste) extends ChroniclesAbilityChange
 final case class ChroniclesAddAbility(ability : String) extends ChroniclesAbilityChange
+final case class ChroniclesRemoveSpecialty(ability : String, specialty : String) extends ChroniclesAbilityChange
 final case class ChroniclesAddSpecialty(ability : String, specialty : String) extends ChroniclesAbilityChange
 final case class ChroniclesSetAbilityRating(ability : String, rating : Int) extends ChroniclesAbilityChange
 final case class ChroniclesSetAbilityType(ability : String, typ : Type) extends ChroniclesAbilityChange

@@ -5,15 +5,17 @@ import java.util.{Date, UUID}
 
 import angulate2.router.{ActivatedRoute, Router}
 import angulate2.std.{Component, OnInit}
-import nephtys.dualframe.cqrs.client.DottedStringPairChange.DottedStringPairChange
+import nephtys.dualframe.cqrs.client.DottedStringPairChange.{DottedStringPairChange, Edit, Insert, Remove}
 import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
 import nephtys.dualframe.cqrs.client.{DottedStringPair, DottedStringPairChange}
+import nephtys.loom.protocol.chronicles.solar.Experiences.ManualEntry
 import nephtys.loom.protocol.chronicles.solar.{CharacterFactory, Solar}
 import nephtys.loom.protocol.shared.CustomPowers.CustomPower
 import nephtys.loom.protocol.shared.{Power, Powers}
 import nephtys.loom.protocol.vanilla.solar.Attributes.AttributeBlock
 import nephtys.loom.protocol.vanilla.solar.Misc.Caste
 import nephtys.loom.protocol.vanilla.solar.{Intimacies, Merits}
+import nephtys.loom.protocol.zprotocols.ZChroniclesSolarProtocol
 import nephtys.loom.protocol.zprotocols.ZChroniclesSolarProtocol._
 import org.nephtys.loom.generic.protocol.InternalStructures.{Email, ID}
 import rxscalajs.subjects.BehaviorSubject
@@ -126,10 +128,9 @@ import scala.scalajs.js.JSConverters._
 class EditChroniclesComponent(  route: ActivatedRoute, chroniclesInMemoryService: ChroniclesInMemoryService, chroniclesControlService: ChroniclesControlService, router : Router) extends OnInit{
 
   //differences:
-  //TODO: custom experience component
+  //custom experience component
   //custom ability component
   //String list component for Aspirations
-
   //custom points-left component
 
   //copy all other components from vanilla component
@@ -152,9 +153,14 @@ class EditChroniclesComponent(  route: ActivatedRoute, chroniclesInMemoryService
 
 
 
-  def abilityChanged(ac : ChroniclesAbilityChange) : Unit = {
-    ??? //TODO: implement
-  }
+  def abilityChanged(ac : ChroniclesAbilityChange) : Unit = {val f = chroniclesControlService.enqueueCommand(ac match {
+    case ChroniclesCasteChanged(caste) => SetCaste(id, caste)
+    case ChroniclesAddSpecialty(ability, specialty) => AddOrRemoveSpecialty(id, ability, specialty, add = true)
+    case ChroniclesRemoveSpecialty(ability, specialty) => AddOrRemoveSpecialty(id, ability, specialty, add = false)
+    case ChroniclesAddAbility(ability) => AddAbility(id, ability)
+    case ChroniclesSetAbilityType(ability, typ) => SetAbilityType(id, ability, typ)
+    case ChroniclesSetAbilityRating(ability, rating) => SetAbilityRating(id, ability, rating)
+  })}
 
 
 
@@ -191,8 +197,34 @@ class EditChroniclesComponent(  route: ActivatedRoute, chroniclesInMemoryService
 
 
   def meritPairsChanged(change : DottedStringPairChange) : Unit = {
-    //TODO: implement
-    ???
+    val f = chroniclesControlService.enqueueCommand(
+      change match {
+        case Insert(value) => {
+          def title : String = value.title
+          def category : String = value.category
+          def idx : Int = character.merits.length
+          def add : Option[Boolean] = Some(true)
+          def rating : Int = value.rating
+          AddRemoveOrChangeMerit(id, title, category, idx, add, rating)
+        }
+        case Remove(index) => {
+          def title : String = ""
+          def category : String = ""
+          def idx : Int = index
+          def add : Option[Boolean] = Some(false)
+          def rating : Int = 0
+          AddRemoveOrChangeMerit(id, title, category, idx, add, rating)
+        }
+        case Edit(index, value) => {
+          def title : String = value.title
+          def category : String = value.category
+          def idx : Int = index
+          def add : Option[Boolean] = None
+          def rating : Int = value.rating
+          AddRemoveOrChangeMerit(id, title, category, idx, add, rating)
+        }
+      }
+    )
   }
 
   def intimaciesChanged(newIntimacies : Seq[StringPair]) : Unit = {
@@ -228,9 +260,8 @@ class EditChroniclesComponent(  route: ActivatedRoute, chroniclesInMemoryService
     val f = chroniclesControlService.enqueueCommands(c)
   }
 
-  def experienceBlockChanged(value : js.Object) : Unit = {
-    //TODO: Implement
-    ???
+  def experienceBlockChanged(value : ManualEntry) : Unit = {
+    val f = chroniclesControlService.enqueueCommand(AddManualExperienceChange(id, value.amountPositive, value.note))
   }
   def charGenStateChange(finished : Boolean) : Unit = {
     println(s"CharGen finished = $finished")
@@ -239,10 +270,6 @@ class EditChroniclesComponent(  route: ActivatedRoute, chroniclesInMemoryService
     }
   }
 
-  def abilityChanged(value : js.Object) : Unit = {
-    //TODO: implement
-    ???
-  }
 
   def casteChanged(value : Caste) : Unit =  {
     println(s"Caste changed to $value")
@@ -257,8 +284,7 @@ class EditChroniclesComponent(  route: ActivatedRoute, chroniclesInMemoryService
 
   def attributeBlockChanged(newblock : AttributeBlock): Unit = {
     println(s"new AttribtueBlock $newblock")
-    //TODO: implement
-    ???
+    val f = chroniclesControlService.enqueueCommands(ZChroniclesSolarProtocol.diff(id = id, from = character.attributes, to = newblock))
   }
 
   var notes : Seq[String] = Seq.empty
@@ -282,14 +308,6 @@ class EditChroniclesComponent(  route: ActivatedRoute, chroniclesInMemoryService
       }
     )
   }
-
-
-
-
-
-
-
-
 
 
 
