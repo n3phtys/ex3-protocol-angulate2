@@ -134,7 +134,6 @@ import vis.Node
     styles = @@@(
 """
    | #mynetwork {
- |            width: 600px;
  |            height: 400px;
  |            border: 1px solid lightgray;
  |        }
@@ -370,8 +369,9 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
 
     // create an array with edges
     var edges = new vis.DataSet[vis.Edge](js.Array(
-      new vis.Edge(from = "1", to = "3"),
-      new vis.Edge(from = "1", to = "2"),
+      new vis.Edge(from = "1", to = "3", toArrow = true),
+      new vis.Edge(from = "1", to = "2", toArrow = true),
+      new vis.Edge(from = "2", to = "1", toArrow = true),
       new vis.Edge(from = "2", to = "4"),
       new vis.Edge(from = "2", to = "5")
     ))
