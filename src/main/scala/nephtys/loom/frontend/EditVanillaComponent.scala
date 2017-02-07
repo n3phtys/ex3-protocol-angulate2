@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit
 
 import angulate2.router.{ActivatedRoute, Router}
 import angulate2.std.{Component, OnInit}
+import angulate2.std._
 import nephtys.dualframe.cqrs.client.{DottedStringPair, DottedStringPairChange}
 import nephtys.dualframe.cqrs.client.DottedStringPairChange.DottedStringPairChange
 import nephtys.dualframe.cqrs.client.StringListDif.{StringListAdd, StringListDelete, StringListDif, StringListEdit}
@@ -27,6 +28,7 @@ import scala.scalajs.js
 import scala.scalajs.js.JSConverters._
 import scala.scalajs.js
 import scala.util.Try
+import vis.Node
 
 /**
   * Created by nephtys on 12/8/16.
@@ -35,6 +37,14 @@ import scala.util.Try
   selector = "detail-edit-vanilla",
   template =
     """<h3 *ngIf="character">Customizing {{character.metaDescriptors.name}}{{charactercastestr}}</h3>
+      |
+      |
+      |<div id="mynetwork"></div>
+      |
+      |
+      |
+      |
+      |
       |
       |
       |
@@ -120,7 +130,15 @@ import scala.util.Try
       |  </div>
       |</div-->
       |
-    """.stripMargin
+    """.stripMargin,
+    styles = @@@(
+"""
+   | #mynetwork {
+ |            width: 600px;
+ |            height: 400px;
+ |            border: 1px solid lightgray;
+ |        }
+  """.stripMargin)
 )
 class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: VanillaInMemoryService, vanillaControlService: VanillaControlService, router : Router) extends OnInit{
 
@@ -335,5 +353,43 @@ class EditVanillaComponent(  route: ActivatedRoute, vanillaInMemoryService: Vani
         reselectCharacter(o)
         selected.next(Some(o))
       })
+
+    buildNetwork()
+  }
+
+
+  def buildNetwork() : Unit = {
+    // create an array with nodes
+    var nodes = new vis.DataSet[vis.Node](js.Array(
+      new Node(id = "1", label = "Node 1"),
+      new Node(id = "2", label = "Node 2"),
+      new Node(id = "3", label = "Node 3"),
+      new Node(id = "4", label = "Node 4"),
+      new Node(id = "5", label = "Node 5")
+      ))
+
+    // create an array with edges
+    var edges = new vis.DataSet[vis.Edge](js.Array(
+      new vis.Edge(from = "1", to = "3"),
+      new vis.Edge(from = "1", to = "2"),
+      new vis.Edge(from = "2", to = "4"),
+      new vis.Edge(from = "2", to = "5")
+    ))
+
+    // create a network
+    var container = org.scalajs.dom.window.document.getElementById("mynetwork")
+
+    // provide the data in the vis format
+    var data = new vis.Data(
+      nodes = nodes,
+      edges = edges
+    )
+    var options = new vis.Options(
+        layout = new vis.Layout(new vis.Hierarchical(vis.UD))
+    )
+
+    // initialize your network!
+    var network = new vis.Network(container, data, options)
+
   }
 }
